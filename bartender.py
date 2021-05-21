@@ -1,3 +1,4 @@
+from displayHelper import displayText, drawProgressBar
 from io import StringIO
 import time
 import sys
@@ -7,6 +8,7 @@ import threading
 import traceback
 import board
 import neopixel
+import adafruit_ssd1306
 
 from menu import MenuItem, Menu, Back, MenuContext, MenuDelegate
 from drinks import drink_list, drink_options
@@ -49,22 +51,11 @@ class Bartender(MenuDelegate):
         GPIO.setup(self.btn2Pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         # configure screen
-        spi_bus = 0
-        spi_device = 0
-        gpio = gaugette.gpio.GPIO()
-        spi = gaugette.spi.SPI(spi_bus, spi_device)
-
-        # Very important... This lets py-gaugette 'know' what pins to use in order to reset the display
-        # Change rows & cols values depending on your display dimensions.
-        self.led = gaugette.ssd1306.SSD1306(
-            gpio, spi, reset_pin=OLED_RESET_PIN, dc_pin=OLED_DC_PIN, rows=self.screen_height, cols=self.screen_width)
-        self.led.begin()
-        self.led.clear_display()
-        self.led.display()
-        self.led.invert_display()
-        time.sleep(0.5)
-        self.led.normal_display()
-        time.sleep(0.5)
+        self.display = adafruit_ssd1306.SSD1306_I2C(
+            SCREEN_WIDTH, SCREEN_HEIGHT, board.I2C(), addr=0x3C)
+        # Clear display.
+        self.display.fill(0)
+        self.display.show()
 
         # load the pump configuration from file
         self.pump_configuration = Bartender.readPumpConfiguration()
@@ -72,11 +63,9 @@ class Bartender(MenuDelegate):
             GPIO.setup(
                 self.pump_configuration[pump]["pin"], GPIO.OUT, initial=GPIO.HIGH)
 
-        # setup pixels:
+        # setup led strip:
         self.numpixels = NUMBER_NEOPIXELS  # Number of LEDs in strip
-
-        # Here's how to control the strip from any two GPIO pins:
-        self.strip = neopixel.NeoPixel(
+        self.leds = neopixel.NeoPixel(
             NEOPIXEL_PIN, NUMBER_NEOPIXELS, brightness=0.2)
 
         print(" Done initializing")
@@ -227,9 +216,8 @@ class Bartender(MenuDelegate):
 
     def displayMenuItem(self, menuItem):
         print(menuItem.name)
-        self.led.clear_display()
-        self.led.draw_text2(0, 20, menuItem.name, 2)
-        self.led.display()
+        displayText(self.display, menuItem.name)
+        self.display.show()
 
     def cycleLights(self):
         head = 0               # Index of first 'on' pixel
@@ -257,12 +245,12 @@ class Bartender(MenuDelegate):
 
     def lightsEndingSequence(self):
         # make lights green
-        self.strip.fill((0, 255, 0))
+        self.leds.fill((0, 255, 0))
 
         time.sleep(5)
 
         # turn lights off
-        self.strip.fill((0, 0, 0))
+        self.leds.fill((0, 0, 0))
 
     def pour(self, pin, waitTime):
         GPIO.output(pin, GPIO.LOW)
@@ -271,10 +259,9 @@ class Bartender(MenuDelegate):
 
     def progressBar(self, waitTime):
         interval = waitTime / 100.0
-        for x in range(1, 101):
-            self.led.clear_display()
-            self.updateProgressBar(x, y=35)
-            self.led.display()
+        for percent in range(0, 100):
+            drawProgressBar(self.display, percent)
+            self.display.show()
             time.sleep(interval)
 
     def makeDrink(self, drink, ingredients):
@@ -335,19 +322,6 @@ class Bartender(MenuDelegate):
     def right_btn(self, ctx):
         if not self.running:
             self.menuContext.select()
-
-    def updateProgressBar(self, percent, x=15, y=15):
-        height = 10
-        width = self.screen_width-2*x
-        for w in range(0, width):
-            self.led.draw_pixel(w + x, y)
-            self.led.draw_pixel(w + x, y + height)
-        for h in range(0, height):
-            self.led.draw_pixel(x, h + y)
-            self.led.draw_pixel(self.screen_width-x, h + y)
-            for p in range(0, percent):
-                p_loc = int(p/100.0*width)
-                self.led.draw_pixel(x + p_loc, h + y)
 
     def run(self):
         self.startInterrupts()
