@@ -5,8 +5,7 @@ def displayText(display, text):
     draw, image = getCanvas(display)
 
     # Draw Some Text
-    font = ImageFont.truetype(
-        "C:/Windows/Fonts/NotoMono-Regular.ttf", min(200//len(text), 20))
+    font = ImageFont.truetype("DejaVuSansMono.ttf", min(200//len(text), 20))
     font_width, font_height = font.getsize(text)
     draw.text((display.width//2 - font_width//2, display.height//2 - font_height//2),
               text, font=font, fill=255)
@@ -50,7 +49,7 @@ class mockDisplay():
         self.imageData.putpixel((x, y), color)
 
     def show(self):
-        self.imageData.show()
+        self.imageData.save("img.png")
 
 
 if __name__ == "__main__":
