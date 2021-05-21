@@ -1,2 +1,4 @@
-RPi.GPIO==0.6.3
-adafruit-circuitpython-ssd1306=2.11.4
+RPi.GPIO>=0.6.3
+adafruit-circuitpython-ssd1306>=2.11.4
+rpi_ws281x>=4.2.6
+ adafruit-circuitpython-neopixel>=6.1.3
