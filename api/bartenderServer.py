@@ -1,12 +1,12 @@
 from flask import app
 from flask.globals import request
 from api.alexaSkill import defineAlexaSkill
-import flask
+from flask import Flask
 from drinks import drink_list
 
 
 class BartenderServer():
-    app = flask(__name__)
+    app = Flask(__name__)
     validDrinks: "dict[str,list[str]]"
 
     def __init__(self, bartender):
