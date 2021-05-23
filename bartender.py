@@ -27,7 +27,7 @@ NUMBER_NEOPIXELS = 45
 NEOPIXEL_PIN = board.D18
 NEOPIXEL_BRIGHTNESS = 64
 
-FLOW_RATE = 60.0/100.0
+FLOW_RATE = 10/100.0
 
 
 class Bartender(MenuDelegate):
@@ -252,6 +252,7 @@ class Bartender(MenuDelegate):
         self.leds.fill((0, 0, 0))
 
     def pour(self, pin, waitTime):
+        GPIO.setmode(GPIO.BCM)
         GPIO.output(pin, GPIO.LOW)
         print(f"pump on pin {pin} started")
         time.sleep(waitTime)
@@ -259,7 +260,7 @@ class Bartender(MenuDelegate):
         print(f"pump on pin {pin} stoped")
 
     def progressBar(self, waitTime):
-        stepTime = 0.25
+        stepTime = 0.05
         start = time.time()
         percent = 0
         while percent < 100:
@@ -349,7 +350,8 @@ class Bartender(MenuDelegate):
         except KeyboardInterrupt:
             GPIO.cleanup()       # clean up GPIO on CTRL+C exit
         GPIO.cleanup()           # clean up GPIO on normal exit
-
+        self.display.clear()
+        self.display.show()
         traceback.print_exc()
 
 

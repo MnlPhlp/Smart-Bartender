@@ -10,6 +10,7 @@ from drinks import drink_list
 class BartenderServer():
     app = Flask(__name__)
     validDrinks: "dict[str,dict]" = {}
+    invalidDrinks: "dict[str,dict]" = {}
 
     def __init__(self, bartender):
         self.bartender = bartender
@@ -23,14 +24,19 @@ class BartenderServer():
     def loadValidDrinks(self):
         for drink in drink_list:
             ingredients = drink["ingredients"]
-            presentIng = 0
+            presentIng = []
             # check if all ingredients are configured in the pump config
             for ing in ingredients.keys():
                 for p in self.bartender.pump_configuration.keys():
                     if (ing == self.bartender.pump_configuration[p]["value"]):
-                        presentIng += 1
-            if (presentIng == len(ingredients.keys())):
+                        presentIng.append(ing)
+            if (len(presentIng) == len(ingredients.keys())):
                 self.validDrinks[drink["key"]] = drink
+            else:
+                # store the missing ingredients for a helpful message
+                drink["ingredients"] = [
+                    i for i in ingredients if i not in presentIng]
+                self.invalidDrinks[drink["key"]] = drink
 
     def drinkEndpoint(self):
         """make a drink
@@ -43,8 +49,15 @@ class BartenderServer():
 
     def makeDrink(self, drink):
         # check if drink is valid
+        name = drink
         if not drink in self.validDrinks:
-            return f'das Getränk {drink} ist nicht verfügbar'
+            missingIngredients = ""
+            if drink in self.invalidDrinks:
+                name = self.invalidDrinks[drink]["name"]
+                # if the drink is in the list show missing ingredients
+                missingIngredients = " Fehlende Zutaten sind: " + \
+                    str(self.invalidDrinks[drink]["ingredients"])
+            return f'das Getränk {name} ist nicht verfügbar.'+missingIngredients
         # make the drink
         if self.bartender.running:
             return "der barkeeper läuft bereits"

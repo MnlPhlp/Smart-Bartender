@@ -67,6 +67,13 @@ drink_list = [
             "captain": 50,
             "coke": 150
         }
+    }, {
+        "name": "Asbach Cola",
+        "key": "asbachCola",
+        "ingredients": {
+            "asbach": 50,
+            "coke": 150
+        }
     }
 ]
 
@@ -78,4 +85,5 @@ drink_options = [
     {"name": "Jack Daniel's", "value": "jacky"},
     {"name": "Cola", "value": "coke"},
     {"name": "O-Saft", "value": "oj"},
+    {"name": "Asbach", "value": "asbach"},
 ]

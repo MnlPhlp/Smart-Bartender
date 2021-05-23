@@ -24,7 +24,7 @@ class Display:
         fillHeight = height - 4
         x = 10
         width = self.display.width-2*x
-        fillWidth = width * (percent/100) - 4
+        fillWidth = max(0, width * (percent/100) - 4)
         self.draw.rectangle((x, y, x+width, y+height), fill=None, outline=1)
         self.draw.rectangle((x+2, y+2, x+2+fillWidth, y+2+fillHeight), fill=1)
         # for x2 in range(x, width+x+1):
@@ -41,8 +41,15 @@ class Display:
         self.setup()
 
     def show(self):
-        self.display.image(self.image)
-        self.display.show()
+        max_tries = 3
+        # multiple tries because of possible io error especially with jumper cables
+        for i in range(0, max_tries):
+            try:
+                self.display.image(self.image)
+                self.display.show()
+                return
+            except Exception as e:
+                print(e)
 
 
 class mockDisplay():
