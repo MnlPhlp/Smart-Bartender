@@ -50,15 +50,15 @@ drink_list = [
         "name": "Jacky Cola",
         "key": "jackyCola",
         "ingredients": {
-            "jacky": 1,
-            "coke": 3
+            "jacky": 5,
+            "coke": 15
         }
     }, {
         "name": "Captain Cola",
         "key": "captainCola",
         "ingredients": {
-            "captain": 1,
-            "coke": 3
+            "captain": 5,
+            "coke": 15
         }
     }
 ]

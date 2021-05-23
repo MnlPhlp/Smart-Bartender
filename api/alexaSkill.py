@@ -1,4 +1,5 @@
-from flask_ask import Ask, request, session, question, statement
+from flask_ask import Ask, session, question, statement
+from flask import request
 
 
 def defineAlexaSkill(app, drinkCallback):
@@ -10,11 +11,14 @@ def defineAlexaSkill(app, drinkCallback):
         print(speech_text)
         return question(speech_text).reprompt(speech_text).simple_card(speech_text)
 
-    @ask.intent('DrinkIntent', mapping={'drink': 'drink'})
-    def drink_intent(drink, room):
-        print(drink)
-        drinkCallback(drink)
-        return statement(f"making a {drink}")
+    @ask.intent('DrinkIntent')
+    def drink_intent():
+        content = request.get_json()
+        drink = content['request']['intent']['slots']['drink'][
+            'resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
+        print("drink intent called with drink: "+drink)
+        message = drinkCallback(drink)
+        return statement(message)
 
     @ask.intent('AMAZON.HelpIntent')
     def help():

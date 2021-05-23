@@ -36,7 +36,7 @@ class BartenderServer():
         """make a drink
         """
         if request.args.get("drink") == None:
-            return 'no drink given'
+            return 'kein Getränk angegeben'
 
         drink = str(request.args.get("drink"))
         return self.makeDrink(drink)
@@ -44,10 +44,10 @@ class BartenderServer():
     def makeDrink(self, drink):
         # check if drink is valid
         if not drink in self.validDrinks:
-            return f'invalid drink {drink}. Valid options are: {self.validDrinks}'
+            return f'das Getränk {drink} ist nicht verfügbar'
         # make the drink
         if self.bartender.running:
-            return "barkeeper is already running"
+            return "der barkeeper läuft bereits"
         else:
             # get data
             ingredients = self.validDrinks[drink]["ingredients"]
@@ -55,4 +55,4 @@ class BartenderServer():
             t = threading.Thread(
                 target=lambda: self.bartender.makeDrink(name, ingredients))
             t.start()
-            return "started making a "+drink
+            return f"starte {name}"
