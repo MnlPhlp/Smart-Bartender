@@ -1,3 +1,5 @@
+from threading import Thread
+import threading
 from flask import app
 from flask.globals import request
 from api.alexaSkill import defineAlexaSkill
@@ -7,7 +9,7 @@ from drinks import drink_list
 
 class BartenderServer():
     app = Flask(__name__)
-    validDrinks: "dict[str,list[str]]" = {}
+    validDrinks: "dict[str,dict]" = {}
 
     def __init__(self, bartender):
         self.bartender = bartender
@@ -28,7 +30,7 @@ class BartenderServer():
                     if (ing == self.bartender.pump_configuration[p]["value"]):
                         presentIng += 1
             if (presentIng == len(ingredients.keys())):
-                self.validDrinks[drink["name"]] = ingredients.keys()
+                self.validDrinks[drink["key"]] = drink
 
     def drinkEndpoint(self):
         """make a drink
@@ -43,8 +45,14 @@ class BartenderServer():
         # check if drink is valid
         if not drink in self.validDrinks:
             return f'invalid drink {drink}. Valid options are: {self.validDrinks}'
-        # get ingredients
-        ingredients = self.validDrinks[drink]
         # make the drink
-        self.bartender.makeDrink(drink, ingredients)
-        return "started making a "+drink
+        if self.bartender.running:
+            return "barkeeper is already running"
+        else:
+            # get data
+            ingredients = self.validDrinks[drink]["ingredients"]
+            name = self.validDrinks[drink]["name"]
+            t = threading.Thread(
+                target=lambda: self.bartender.makeDrink(name, ingredients))
+            t.start()
+            return "started making a "+drink

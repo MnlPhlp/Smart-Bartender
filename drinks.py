@@ -48,15 +48,17 @@ drink_list = [
         }
     }, {
         "name": "Jacky Cola",
+        "key": "jackyCola",
         "ingredients": {
-            "jacky": 5,
-            "coke": 15
+            "jacky": 1,
+            "coke": 3
         }
     }, {
         "name": "Captain Cola",
+        "key": "captainCola",
         "ingredients": {
-            "captain": 5,
-            "coke": 15
+            "captain": 1,
+            "coke": 3
         }
     }
 ]

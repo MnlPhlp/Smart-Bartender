@@ -1,5 +1,5 @@
 from api.bartenderServer import BartenderServer
-from displayHelper import displayText, drawProgressBar
+from displayHelper import Display
 from io import StringIO
 import time
 import sys
@@ -14,8 +14,6 @@ import adafruit_ssd1306
 from menu import MenuItem, Menu, Back, MenuContext, MenuDelegate
 from drinks import drink_list, drink_options
 
-GPIO.setmode(GPIO.BCM)
-
 SCREEN_WIDTH = 128
 SCREEN_HEIGHT = 64
 
@@ -26,7 +24,7 @@ RIGHT_BTN_PIN = 21
 RIGHT_PIN_BOUNCE = 2000
 
 NUMBER_NEOPIXELS = 45
-NEOPIXEL_PIN = board.D26
+NEOPIXEL_PIN = board.D18
 NEOPIXEL_BRIGHTNESS = 64
 
 FLOW_RATE = 60.0/100.0
@@ -44,15 +42,17 @@ class Bartender(MenuDelegate):
         self.btn1Pin = LEFT_BTN_PIN
         self.btn2Pin = RIGHT_BTN_PIN
 
+        GPIO.setmode(GPIO.BCM)
+
         # configure interrups for buttons
         GPIO.setup(self.btn1Pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.btn2Pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         # configure screen
-        self.display = adafruit_ssd1306.SSD1306_I2C(
-            SCREEN_WIDTH, SCREEN_HEIGHT, board.I2C(), addr=0x3C)
+        self.display = Display(adafruit_ssd1306.SSD1306_I2C(
+            SCREEN_WIDTH, SCREEN_HEIGHT, board.I2C(), addr=0x3C))
         # Clear display.
-        self.display.fill(0)
+        self.display.setup()
         self.display.show()
 
         # load the pump configuration from file
@@ -214,7 +214,8 @@ class Bartender(MenuDelegate):
 
     def displayMenuItem(self, menuItem):
         print(menuItem.name)
-        displayText(self.display, menuItem.name)
+        self.display.clear()
+        self.display.displayText(menuItem.name)
         self.display.show()
 
     def cycleLights(self):
@@ -252,20 +253,37 @@ class Bartender(MenuDelegate):
 
     def pour(self, pin, waitTime):
         GPIO.output(pin, GPIO.LOW)
+        print(f"pump on pin {pin} started")
         time.sleep(waitTime)
         GPIO.output(pin, GPIO.HIGH)
+        print(f"pump on pin {pin} stoped")
 
     def progressBar(self, waitTime):
-        interval = waitTime / 100.0
-        for percent in range(0, 100):
-            drawProgressBar(self.display, percent)
+        stepTime = 0.25
+        start = time.time()
+        percent = 0
+        while percent < 100:
+            loopStart = time.time()
+            # update the progress bar
+            self.display.drawProgressBar(percent)
             self.display.show()
-            time.sleep(interval)
+            # wait the remaining time to limit refreshes
+            loopElapsed = time.time()-loopStart
+            if loopElapsed < stepTime:
+                time.sleep(stepTime-loopElapsed)
+            # update the percentage
+            percent = ((time.time()-start)/waitTime*100)
+
+        self.display.drawProgressBar(100)
 
     def makeDrink(self, drink, ingredients):
         # cancel any button presses while the drink is being made
         # self.stopInterrupts()
         self.running = True
+
+        # display the drink in the making
+        self.display.clear()
+        self.display.displayText(drink)
 
         # launch a thread to control lighting
         lightsThread = threading.Thread(target=self.cycleLights)

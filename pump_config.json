@@ -1,32 +1,32 @@
 {
 	"pump_1": {
 		"name": "Pump 1",
-		"pin": 17, 
-		"value": "gin"
+		"pin": 17,
+		"value": "jacky"
 	},
 	"pump_2": {
 		"name": "Pump 2",
-		"pin": 27, 
-		"value": "tonic"
+		"pin": 27,
+		"value": "coke"
 	},
 	"pump_3": {
 		"name": "Pump 3",
-		"pin": 22, 
-		"value": null
+		"pin": 22,
+		"value": "captain"
 	},
 	"pump_4": {
 		"name": "Pump 4",
-		"pin": 23, 
+		"pin": 23,
 		"value": null
 	},
 	"pump_5": {
 		"name": "Pump 5",
-		"pin": 24, 
+		"pin": 24,
 		"value": null
 	},
 	"pump_6": {
 		"name": "Pump 6",
-		"pin": 25, 
+		"pin": 25,
 		"value": null
 	}
 }
