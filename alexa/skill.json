@@ -1,0 +1,93 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "smart barkeeper",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "DrinkIntent",
+                    "slots": [
+                        {
+                            "name": "drink",
+                            "type": "drink"
+                        }
+                    ],
+                    "samples": [
+                        "mach mir eine {drink}",
+                        "mach mir einen {drink}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                }
+            ],
+            "types": [
+                {
+                    "name": "drink",
+                    "values": [
+                        {
+                            "id": "captainCola",
+                            "name": {
+                                "value": "captain cola"
+                            }
+                        },
+                        {
+                            "id": "jackyCola",
+                            "name": {
+                                "value": "jacky cola"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "DrinkIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "drink",
+                            "type": "drink",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.199599953872.152204345937"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.199599953872.152204345937",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Was möchtest du trinken?"
+                    }
+                ]
+            }
+        ]
+    }
+}
