@@ -1,3 +1,6 @@
+from grpcCode.bartenderServer import BartenderServer
+from grpcCode.bartender_pb2_grpc import BartenderServicer, add_BartenderServicer_to_server
+import grpc
 from displayHelper import displayText, drawProgressBar
 from io import StringIO
 import time
@@ -336,4 +339,6 @@ class Bartender(MenuDelegate):
 
 bartender = Bartender()
 bartender.buildMenu(drink_list, drink_options)
+bartnderServer = BartenderServer(bartender)
+bartnderServer.start()
 bartender.run()
