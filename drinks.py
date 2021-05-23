@@ -2,18 +2,21 @@
 drink_list = [
     {
         "name": "Rum & Coke",
+        "key": "rumCoke",
         "ingredients": {
             "rum": 50,
             "coke": 150
         }
     }, {
         "name": "Gin & Tonic",
+        "key": "ginTonic",
         "ingredients": {
             "gin": 50,
             "tonic": 150
         }
     }, {
         "name": "Long Island",
+        "key": "longIsland",
         "ingredients": {
             "gin": 15,
             "rum": 15,
@@ -24,24 +27,28 @@ drink_list = [
         }
     }, {
         "name": "Screwdriver",
+        "key": "screwdriver",
         "ingredients": {
             "vodka": 50,
             "oj": 150
         }
     }, {
         "name": "Margarita",
+        "key": "margarita",
         "ingredients": {
             "tequila": 50,
             "mmix": 150
         }
     }, {
         "name": "Gin & Juice",
+        "key": "ginJuice",
         "ingredients": {
             "gin": 50,
             "oj": 150
         }
     }, {
         "name": "Tequila Sunrise",
+        "key": "tequilaSunrise",
         "ingredients": {
             "tequila": 50,
             "oj": 150
@@ -50,15 +57,15 @@ drink_list = [
         "name": "Jacky Cola",
         "key": "jackyCola",
         "ingredients": {
-            "jacky": 5,
-            "coke": 15
+            "jacky": 50,
+            "coke": 150
         }
     }, {
         "name": "Captain Cola",
         "key": "captainCola",
         "ingredients": {
-            "captain": 5,
-            "coke": 15
+            "captain": 50,
+            "coke": 150
         }
     }
 ]

@@ -42,15 +42,57 @@
                     "name": "drink",
                     "values": [
                         {
-                            "id": "captainCola",
+                            "id": "rumCoke",
                             "name": {
-                                "value": "captain cola"
+                                "value": "Rum & Coke"
+                            }
+                        },
+                        {
+                            "id": "ginTonic",
+                            "name": {
+                                "value": "Gin & Tonic"
+                            }
+                        },
+                        {
+                            "id": "longIsland",
+                            "name": {
+                                "value": "Long Island"
+                            }
+                        },
+                        {
+                            "id": "screwdriver",
+                            "name": {
+                                "value": "Screwdriver"
+                            }
+                        },
+                        {
+                            "id": "margarita",
+                            "name": {
+                                "value": "Margarita"
+                            }
+                        },
+                        {
+                            "id": "ginJuice",
+                            "name": {
+                                "value": "Gin & Juice"
+                            }
+                        },
+                        {
+                            "id": "tequilaSunrise",
+                            "name": {
+                                "value": "Tequila Sunrise"
                             }
                         },
                         {
                             "id": "jackyCola",
                             "name": {
-                                "value": "jacky cola"
+                                "value": "Jacky Cola"
+                            }
+                        },
+                        {
+                            "id": "captainCola",
+                            "name": {
+                                "value": "Captain Cola"
                             }
                         }
                     ]
