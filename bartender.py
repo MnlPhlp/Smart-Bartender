@@ -1,5 +1,4 @@
 from api.bartenderServer import BartenderServer
-import grpc
 from displayHelper import displayText, drawProgressBar
 from io import StringIO
 import time
