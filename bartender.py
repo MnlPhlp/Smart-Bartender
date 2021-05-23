@@ -1,5 +1,4 @@
-from grpcCode.bartenderServer import BartenderServer
-from grpcCode.bartender_pb2_grpc import BartenderServicer, add_BartenderServicer_to_server
+from api import BartenderServer
 import grpc
 from displayHelper import displayText, drawProgressBar
 from io import StringIO
