@@ -14,8 +14,12 @@ def defineAlexaSkill(app, drinkCallback):
     @ask.intent('DrinkIntent')
     def drink_intent():
         content = request.get_json()
-        drink = content['request']['intent']['slots']['drink'][
-            'resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
+        drink = ""
+        try:
+            drink = content['request']['intent']['slots']['drink'][
+                'resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
+        except KeyError:
+            return "der angegebene Drink ist nicht verfügbar"
         print("drink intent called with drink: "+drink)
         message = drinkCallback(drink)
         return statement(message)
