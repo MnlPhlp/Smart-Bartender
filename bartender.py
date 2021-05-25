@@ -23,7 +23,7 @@ LEFT_PIN_BOUNCE = 1000
 RIGHT_BTN_PIN = 21
 RIGHT_PIN_BOUNCE = 2000
 
-NUMBER_NEOPIXELS = 45
+NUMBER_NEOPIXELS = 12
 NEOPIXEL_PIN = board.D18
 NEOPIXEL_BRIGHTNESS = 64
 
@@ -65,6 +65,8 @@ class Bartender(MenuDelegate):
         self.numpixels = NUMBER_NEOPIXELS  # Number of LEDs in strip
         self.leds = neopixel.NeoPixel(
             NEOPIXEL_PIN, NUMBER_NEOPIXELS, brightness=0.2)
+        self.leds.fill((0, 0, 0))
+        self.lightsEndingSequence()
 
         print(" Done initializing")
 
@@ -243,13 +245,15 @@ class Bartender(MenuDelegate):
         print("lights stoped")
 
     def lightsEndingSequence(self):
-        # make lights green
-        self.leds.fill((0, 255, 0))
-
-        time.sleep(5)
-
-        # turn lights off
-        self.leds.fill((0, 0, 0))
+        sleepTime = 0.1
+        for i in range(0, self.numpixels):
+            # make lights green
+            self.leds[i] = (0, 255, 0)
+            time.sleep(sleepTime)
+        for i in range(0, self.numpixels):
+            # turn lights off
+            self.leds.fill((0, 0, 0))
+            time.sleep(sleepTime)
 
     def pour(self, pin, waitTime):
         GPIO.setmode(GPIO.BCM)
