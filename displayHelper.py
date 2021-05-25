@@ -50,27 +50,3 @@ class Display:
                 return
             except Exception as e:
                 print(e)
-
-
-class mockDisplay():
-    imageData: Image.Image = None
-
-    def __init__(self) -> None:
-        self.width = 128
-        self.height = 64
-
-    def image(self, image):
-        self.imageData = image
-
-    def pixel(self, x, y, color):
-        self.imageData.putpixel((x, y), color)
-
-    def show(self):
-        self.imageData.save("img.png")
-
-
-if __name__ == "__main__":
-    dsp = mockDisplay()
-    displayText(dsp, "Jacky Cola")
-    drawProgressBar(dsp, 20)
-    dsp.show()
