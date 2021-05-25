@@ -252,7 +252,7 @@ class Bartender(MenuDelegate):
             time.sleep(sleepTime)
         for i in range(0, self.numpixels):
             # turn lights off
-            self.leds.fill((0, 0, 0))
+            self.leds[i] = (0, 0, 0)
             time.sleep(sleepTime)
 
     def pour(self, pin, waitTime):
@@ -352,11 +352,12 @@ class Bartender(MenuDelegate):
                 time.sleep(0.1)
 
         except KeyboardInterrupt:
-            GPIO.cleanup()       # clean up GPIO on CTRL+C exit
-        GPIO.cleanup()           # clean up GPIO on normal exit
+            print("shutting down")
+        print("clearing screen")
         self.display.clear()
         self.display.show()
-        traceback.print_exc()
+        print("turning off leds")
+        self.leds.fill((0, 0, 0))
 
 
 bartender = Bartender()
