@@ -1,3 +1,4 @@
+from os import read
 from threading import Thread
 import threading
 from flask import app
@@ -11,6 +12,7 @@ def html(message):
     return f"""
         <html>
             <head>
+                <link rel="stylesheet" href="style.css">
                 <title>Smart Barkeeper</title>
             <head>
             <body>
@@ -31,15 +33,20 @@ class BartenderServer():
         self.app.add_url_rule("/makeDrink", "makeDrink", self.drinkEndpoint)
         self.app.add_url_rule("/stop", "stop", self.stopEndpoint)
         self.app.add_url_rule("/", "index", self.indexHandler)
+        self.app.add_url_rule("/style.css", "css", self.cssHandler)
 
     def start(self):
         defineAlexaSkill(self.app, self.makeDrink)
         self.app.run(host="0.0.0.0", port=8080)
 
+    def cssHandler(self):
+        with open("static/style.css", "rt") as f:
+            return f.read()
+
     def indexHandler(self):
         body = ""
         for drink in self.validDrinks:
-            body += f'<a href="makeDrink?drink={drink}"> <button> {drink} </button> </a>'
+            body += f'<a href="makeDrink?drink={drink}"> <button> {drink} </button> </a><br>'
         return html(body)
 
     def stopEndpoint(self):

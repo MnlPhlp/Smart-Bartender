@@ -85,6 +85,7 @@ class Bartender(MenuDelegate):
             pinId = self.pump_configuration[pump]["pin"]
             pin = digitalio.DigitalInOut(Pin(pinId))
             pin.direction = digitalio.Direction.OUTPUT
+            pin.value = True
             self.pump_configuration[pump]["pin"] = pin
 
         self.leds.stopCycle()
@@ -230,10 +231,10 @@ class Bartender(MenuDelegate):
         self.display.show()
 
     def pour(self, pin, waitTime):
-        pin.value = True
+        pin.value = False
         logging.info(f"pump on pin {pin._pin} started")
         self.stopEvent.wait(waitTime)
-        pin.value = False
+        pin.value = True
         logging.info(f"pump on pin {pin._pin} stoped")
 
     def progressBar(self, waitTime):
