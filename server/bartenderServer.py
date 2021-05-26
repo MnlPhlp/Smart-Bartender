@@ -1,7 +1,4 @@
-from os import read
 from threading import Thread
-import threading
-from flask import app
 from flask.globals import request
 from server.alexaSkill import defineAlexaSkill
 from flask import Flask
@@ -44,9 +41,10 @@ class BartenderServer():
             return f.read()
 
     def indexHandler(self):
-        body = ""
+        body = '<div class="row">'
         for drink in self.validDrinks:
-            body += f'<a href="makeDrink?drink={drink}"> <button> {drink} </button> </a><br>'
+            body += f'<a href="makeDrink?drink={drink}"> <button class="column">{drink}</button> </a>'
+        body += "</div>"
         return html(body)
 
     def stopEndpoint(self):
@@ -97,7 +95,7 @@ class BartenderServer():
             # get data
             ingredients = self.validDrinks[drink]["ingredients"]
             name = self.validDrinks[drink]["name"]
-            t = threading.Thread(
+            t = Thread(
                 target=lambda: self.bartender.makeDrink(name, ingredients))
             t.start()
             return f"starte {name}"
