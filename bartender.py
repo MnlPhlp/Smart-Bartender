@@ -1,6 +1,6 @@
-from ledHelper import Led
+from helper.ledHelper import Led
 from api.bartenderServer import BartenderServer
-from displayHelper import Display
+from helper.displayHelper import Display
 import time
 import json
 import threading
@@ -9,9 +9,10 @@ import neopixel
 import adafruit_ssd1306
 from adafruit_debouncer import Debouncer
 import digitalio
+from adafruit_blinka.microcontroller.bcm283x.pin import Pin
 
 from menu import MenuItem, Menu, Back, MenuContext, MenuDelegate
-from drinks import drink_list, drink_options
+from config.drinks import drink_list, drink_options
 
 SCREEN_WIDTH = 128
 SCREEN_HEIGHT = 64
@@ -63,8 +64,10 @@ class Bartender(MenuDelegate):
         # load the pump configuration from file
         self.pump_configuration = Bartender.readPumpConfiguration()
         for pump in self.pump_configuration.keys():
-            GPIO.setup(
-                self.pump_configuration[pump]["pin"], GPIO.OUT, initial=GPIO.HIGH)
+            pinId = self.pump_configuration[pump]["pin"]
+            pin = digitalio.DigitalInOut(Pin(pinId))
+            pin.direction = digitalio.Direction.OUTPUT
+            self.pump_configuration[pump]["pin"] = pin
 
         self.leds.stopCycle()
         self.leds.shutdownSequence()
@@ -72,11 +75,11 @@ class Bartender(MenuDelegate):
 
     @staticmethod
     def readPumpConfiguration():
-        return json.load(open('pump_config.json'))
+        return json.load(open('config/pump_config.json'))
 
     @staticmethod
     def writePumpConfiguration(configuration):
-        with open("pump_config.json", "w") as jsonFile:
+        with open("config/pump_config.json", "w") as jsonFile:
             json.dump(configuration, jsonFile)
 
     def buildMenu(self, drink_list, drink_options):
@@ -209,11 +212,10 @@ class Bartender(MenuDelegate):
         self.display.show()
 
     def pour(self, pin, waitTime):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.output(pin, GPIO.LOW)
+        pin.value = True
         print(f"pump on pin {pin} started")
         time.sleep(waitTime)
-        GPIO.output(pin, GPIO.HIGH)
+        pin.value = False
         print(f"pump on pin {pin} stoped")
 
     def progressBar(self, waitTime):
@@ -282,11 +284,11 @@ class Bartender(MenuDelegate):
         # reenable interrupts
         self.running = False
 
-    def left_btn(self, ctx):
+    def left_btn(self):
         if not self.running:
             self.menuContext.advance()
 
-    def right_btn(self, ctx):
+    def right_btn(self):
         if not self.running:
             self.menuContext.select()
 
