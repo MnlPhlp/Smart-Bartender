@@ -7,6 +7,19 @@ from flask import Flask
 from config.drinks import drink_list
 
 
+def html(message):
+    return f"""
+        <html>
+            <head>
+                <title>Smart Barkeeper</title>
+            <head>
+            <body>
+                {message}
+            </body>
+        </html>
+        """
+
+
 class BartenderServer():
     app = Flask(__name__)
     validDrinks: "dict[str,dict]" = {}
@@ -24,7 +37,7 @@ class BartenderServer():
 
     def stopEndpoint(self):
         self.bartender.stop()
-        return "stopping current drink"
+        return html("stopping current drink")
 
     def loadValidDrinks(self):
         for drink in drink_list:
@@ -47,10 +60,10 @@ class BartenderServer():
         """make a drink
         """
         if request.args.get("drink") == None:
-            return 'kein Getränk angegeben'
+            return html('kein Getränk angegeben')
 
         drink = str(request.args.get("drink"))
-        return self.makeDrink(drink)
+        return html(self.makeDrink(drink))
 
     def makeDrink(self, drink):
         # check if drink is valid
