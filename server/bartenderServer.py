@@ -2,7 +2,7 @@ from threading import Thread
 import threading
 from flask import app
 from flask.globals import request
-from api.alexaSkill import defineAlexaSkill
+from server.alexaSkill import defineAlexaSkill
 from flask import Flask
 from config.drinks import drink_list
 
