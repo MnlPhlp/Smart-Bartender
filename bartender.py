@@ -17,10 +17,10 @@ from config.drinks import drink_list, drink_options
 SCREEN_WIDTH = 128
 SCREEN_HEIGHT = 64
 
-LEFT_BTN_PIN = board.D20
+LEFT_BTN_PIN = board.D14
 LEFT_PIN_BOUNCE = 500
 
-RIGHT_BTN_PIN = board.D21
+RIGHT_BTN_PIN = board.D15
 RIGHT_PIN_BOUNCE = 500
 
 NUMBER_NEOPIXELS = 12
@@ -35,6 +35,7 @@ class Bartender(MenuDelegate):
 
     def __init__(self):
         self.running = False
+        self.stopEvent = threading.Event()
 
         # setup led strip:
         self.leds = Led(neopixel.NeoPixel(
@@ -213,16 +214,16 @@ class Bartender(MenuDelegate):
 
     def pour(self, pin, waitTime):
         pin.value = True
-        print(f"pump on pin {pin} started")
-        time.sleep(waitTime)
+        print(f"pump on pin {pin._pin} started")
+        self.stopEvent.wait(waitTime)
         pin.value = False
-        print(f"pump on pin {pin} stoped")
+        print(f"pump on pin {pin._pin} stoped")
 
     def progressBar(self, waitTime):
         stepTime = 0.05
         start = time.time()
         percent = 0
-        while percent < 100:
+        while percent < 100 and not self.stopEvent.is_set():
             loopStart = time.time()
             # update the progress bar
             self.display.drawProgressBar(percent)
@@ -250,15 +251,14 @@ class Bartender(MenuDelegate):
         # Parse the drink ingredients and spawn threads for pumps
         maxTime = 0
         pumpThreads = []
-        for ing in ingredients.keys():
-            for pump in self.pump_configuration.keys():
-                if ing == self.pump_configuration[pump]["value"]:
-                    waitTime = ingredients[ing] * FLOW_RATE
-                    if (waitTime > maxTime):
-                        maxTime = waitTime
-                    pump_t = threading.Thread(target=self.pour, args=(
-                        self.pump_configuration[pump]["pin"], waitTime))
-                    pumpThreads.append(pump_t)
+        pumps = self.pump_configuration
+        for pump in [pumps[key] for key in pumps if pumps[key]["value"] in ingredients]:
+            waitTime = ingredients[pump["value"]] * FLOW_RATE
+            if (waitTime > maxTime):
+                maxTime = waitTime
+            pump_t = threading.Thread(
+                target=self.pour, args=(pump["pin"], waitTime))
+            pumpThreads.append(pump_t)
 
         # start the pump threads
         for thread in pumpThreads:
@@ -266,10 +266,12 @@ class Bartender(MenuDelegate):
 
         # start the progress bar
         self.progressBar(maxTime)
+        print("progressbar finished")
 
         # wait for threads to finish
         for thread in pumpThreads:
             thread.join()
+        print("pumpThreads finished")
 
         # show the main menu
         self.menuContext.showMenu()
@@ -277,9 +279,6 @@ class Bartender(MenuDelegate):
         # stop the light thread
         self.leds.stopCycle()
         self.leds.shutdownSequence()
-
-        # sleep for a couple seconds to make sure the interrupts don't get triggered
-        time.sleep(2)
 
         # reenable interrupts
         self.running = False
@@ -291,6 +290,8 @@ class Bartender(MenuDelegate):
     def right_btn(self):
         if not self.running:
             self.menuContext.select()
+        else:
+            self.stop()
 
     def handleInput(self):
         self.btn1.update()
@@ -300,15 +301,23 @@ class Bartender(MenuDelegate):
         if self.btn2.fell:
             self.right_btn()
 
+    def stop(self):
+        self.stopEvent.set()
+        # wait for everything to finish
+        while self.running:
+            time.sleep(0.5)
+        self.stopEvent.clear()
+
     def run(self):
         # main loop
         try:
             while True:
                 time.sleep(0.1)
                 self.handleInput()
-
         except KeyboardInterrupt:
             print("shutting down")
+        print("stopping running threads")
+        self.stop()
         print("clearing screen")
         self.display.clear()
         self.display.show()

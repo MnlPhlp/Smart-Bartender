@@ -4,7 +4,7 @@ from flask import app
 from flask.globals import request
 from api.alexaSkill import defineAlexaSkill
 from flask import Flask
-from drinks import drink_list
+from config.drinks import drink_list
 
 
 class BartenderServer():
@@ -16,10 +16,15 @@ class BartenderServer():
         self.bartender = bartender
         self.loadValidDrinks()
         self.app.add_url_rule("/makeDrink", "makeDrink", self.drinkEndpoint)
+        self.app.add_url_rule("/stop", "stop", self.stopEndpoint)
 
     def start(self):
         defineAlexaSkill(self.app, self.makeDrink)
         self.app.run(host="0.0.0.0", port=8080)
+
+    def stopEndpoint(self):
+        self.bartender.stop()
+        return "stopping current drink"
 
     def loadValidDrinks(self):
         for drink in drink_list:
