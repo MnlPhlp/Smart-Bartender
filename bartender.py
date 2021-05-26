@@ -10,6 +10,9 @@ import adafruit_ssd1306
 from adafruit_debouncer import Debouncer
 import digitalio
 from adafruit_blinka.microcontroller.bcm283x.pin import Pin
+import logging
+from logging.handlers import RotatingFileHandler
+from sys import stdout
 
 from menu import MenuItem, Menu, Back, MenuContext, MenuDelegate
 from config.drinks import drink_list, drink_options
@@ -28,6 +31,19 @@ NEOPIXEL_PIN = board.D18
 NEOPIXEL_BRIGHTNESS = 0.1
 
 FLOW_RATE = 10/100.0
+
+# setup logging
+logger = logging.getLogger()
+# log to cli
+clihandler = logging.StreamHandler(stdout)
+clihandler.setLevel(logging.INFO)
+logger.addHandler(clihandler)
+# log to file
+fileHandler = RotatingFileHandler("log.log", mode='a', maxBytes=5*1024*1024,
+                                  backupCount=2, encoding='utf-8', delay=False)
+fileHandler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+fileHandler.setLevel(logging.DEBUG)
+logger.addHandler(fileHandler)
 
 
 class Bartender(MenuDelegate):
@@ -72,7 +88,7 @@ class Bartender(MenuDelegate):
 
         self.leds.stopCycle()
         self.leds.shutdownSequence()
-        print(" Done initializing")
+        logging.info("Done initializing")
 
     @staticmethod
     def readPumpConfiguration():
@@ -207,17 +223,17 @@ class Bartender(MenuDelegate):
         self.running = False
 
     def displayMenuItem(self, menuItem):
-        print(menuItem.name)
+        logging.info(f"current menu: {menuItem.name}")
         self.display.clear()
         self.display.displayText(menuItem.name)
         self.display.show()
 
     def pour(self, pin, waitTime):
         pin.value = True
-        print(f"pump on pin {pin._pin} started")
+        logging.info(f"pump on pin {pin._pin} started")
         self.stopEvent.wait(waitTime)
         pin.value = False
-        print(f"pump on pin {pin._pin} stoped")
+        logging.info(f"pump on pin {pin._pin} stoped")
 
     def progressBar(self, waitTime):
         stepTime = 0.05
@@ -266,12 +282,10 @@ class Bartender(MenuDelegate):
 
         # start the progress bar
         self.progressBar(maxTime)
-        print("progressbar finished")
 
         # wait for threads to finish
         for thread in pumpThreads:
             thread.join()
-        print("pumpThreads finished")
 
         # show the main menu
         self.menuContext.showMenu()
@@ -315,13 +329,13 @@ class Bartender(MenuDelegate):
                 time.sleep(0.1)
                 self.handleInput()
         except KeyboardInterrupt:
-            print("shutting down")
-        print("stopping running threads")
+            logging.info("shutting down")
+        logging.info("stopping running threads")
         self.stop()
-        print("clearing screen")
+        logging.info("clearing screen")
         self.display.clear()
         self.display.show()
-        print("turning off leds")
+        logging.info("turning off leds")
         self.leds.stopCycle()
         self.leds.clear()
 
