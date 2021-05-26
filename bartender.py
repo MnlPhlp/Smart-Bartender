@@ -34,6 +34,7 @@ FLOW_RATE = 10/100.0
 
 # setup logging
 logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 # log to cli
 clihandler = logging.StreamHandler(stdout)
 clihandler.setLevel(logging.INFO)
