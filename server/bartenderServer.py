@@ -30,10 +30,17 @@ class BartenderServer():
         self.loadValidDrinks()
         self.app.add_url_rule("/makeDrink", "makeDrink", self.drinkEndpoint)
         self.app.add_url_rule("/stop", "stop", self.stopEndpoint)
+        self.app.add_url_rule("/", "index", self.indexHandler)
 
     def start(self):
         defineAlexaSkill(self.app, self.makeDrink)
         self.app.run(host="0.0.0.0", port=8080)
+
+    def indexHandler(self):
+        body = ""
+        for drink in self.validDrinks:
+            body += f'<a href="makeDrink?drink={drink}"> <button> {drink} </button> </a>'
+        return html(body)
 
     def stopEndpoint(self):
         self.bartender.stop()
