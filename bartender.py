@@ -1,3 +1,4 @@
+from multiprocessing import Process
 from helper.ledHelper import Led
 from server.bartenderServer import BartenderServer
 from helper.displayHelper import Display
@@ -49,6 +50,7 @@ logger.addHandler(fileHandler)
 
 class Bartender(MenuDelegate):
     leds: Led
+    server: BartenderServer
 
     def __init__(self):
         self.running = False
@@ -180,7 +182,10 @@ class Bartender(MenuDelegate):
 
     def menuItemClicked(self, menuItem):
         if (menuItem.type == "drink"):
-            self.makeDrink(menuItem.name, menuItem.attributes["ingredients"])
+            def func(): return self.makeDrink(
+                menuItem.name, menuItem.attributes["ingredients"])
+            t = threading.Thread(target=func)
+            t.start()
             return True
         elif(menuItem.type == "pump_selection"):
             self.pump_configuration[menuItem.attributes["key"]
@@ -300,13 +305,18 @@ class Bartender(MenuDelegate):
         self.running = False
 
     def left_btn(self):
+        logging.info("left button pressed")
         if not self.running:
+            logging.info("menu advance")
             self.menuContext.advance()
 
     def right_btn(self):
+        logging.info("right button pressed")
         if not self.running:
+            logging.info("menu select")
             self.menuContext.select()
         else:
+            logging.info("stop")
             self.stop()
 
     def handleInput(self):
@@ -318,22 +328,25 @@ class Bartender(MenuDelegate):
             self.right_btn()
 
     def stop(self):
+        logging.info("stopping current drink")
         self.stopEvent.set()
         # wait for everything to finish
         while self.running:
             time.sleep(0.5)
         self.stopEvent.clear()
+        logging.info("drink is stoped")
 
     def run(self):
         # main loop
         try:
             while True:
-                time.sleep(0.1)
                 self.handleInput()
+                time.sleep(0.1)
         except KeyboardInterrupt:
             logging.info("shutting down")
         logging.info("stopping running threads")
         self.stop()
+        self.server.stop()
         logging.info("clearing screen")
         self.display.clear()
         self.display.show()
@@ -344,6 +357,8 @@ class Bartender(MenuDelegate):
 
 bartender = Bartender()
 bartender.buildMenu(drink_list, drink_options)
-bartnderServer = BartenderServer(bartender)
-bartnderServer.start()
+bartender.server = BartenderServer(bartender)
+logging.info("starting server")
+bartender.server.start()
+logging.info("starting button handling")
 bartender.run()

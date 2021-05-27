@@ -1,5 +1,5 @@
 from os import read
-from threading import Thread
+from threading import Thread, ThreadError
 import threading
 from flask import app
 from flask.globals import request
@@ -26,6 +26,7 @@ class BartenderServer():
     app = Flask(__name__)
     validDrinks: "dict[str,dict]" = {}
     invalidDrinks: "dict[str,dict]" = {}
+    serverThread: Thread
 
     def __init__(self, bartender):
         self.bartender = bartender
@@ -37,7 +38,9 @@ class BartenderServer():
 
     def start(self):
         defineAlexaSkill(self.app, self.makeDrink)
-        self.app.run(host="0.0.0.0", port=8080)
+        self.serverThread = Thread(
+            target=lambda: self.app.run(host="0.0.0.0", port=8080))
+        self.serverThread.start()
 
     def cssHandler(self):
         with open("static/style.css", "rt") as f:
@@ -101,3 +104,9 @@ class BartenderServer():
                 target=lambda: self.bartender.makeDrink(name, ingredients))
             t.start()
             return f"starte {name}"
+
+    def stop(self):
+        func = request.environ.get('werkzeug.server.shutdown')
+        if func is None:
+            raise RuntimeError('Not running with the Werkzeug Server')
+        func()
