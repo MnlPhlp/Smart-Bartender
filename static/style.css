@@ -1,6 +1,30 @@
 button{
-    width: 100%;
-    height: 5em;
-    font-size: 5em;
-    margin-top: 10px;
+    font-size: 4em;
+    padding: 20px;
+    height: 100%
 }
+
+.column{
+    grid-area: col;
+    width: 100%;
+}
+
+.row{
+    display: grid;
+    grid-template-areas: 
+        'col col';
+    
+    grid-template-columns: 50% 50%;
+    text-align: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+@media screen and (max-width: 1080px) {
+    .row{
+        grid-template-areas: 
+            'col'
+            'col';
+        grid-template-columns: 100%;
+    }
+  }
