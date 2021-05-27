@@ -2,7 +2,7 @@ from os import read
 from threading import Thread, ThreadError
 import threading
 from flask import app
-from flask.globals import request
+from flask import request
 from server.alexaSkill import defineAlexaSkill
 from flask import Flask
 from config.drinks import drink_list
@@ -107,7 +107,5 @@ class BartenderServer():
             return f"starte {name}"
 
     def stop(self):
-        func = request.environ.get('werkzeug.server.shutdown')
-        if func is None:
-            raise RuntimeError('Not running with the Werkzeug Server')
-        func()
+        # find a way to stop the app server
+        pass
