@@ -83,12 +83,6 @@ class Bartender(MenuDelegate):
 
         # load the pump configuration from file
         self.pump_configuration = Bartender.readPumpConfiguration()
-        for pump in self.pump_configuration.keys():
-            pinId = self.pump_configuration[pump]["pin"]
-            pin = digitalio.DigitalInOut(Pin(pinId))
-            pin.direction = digitalio.Direction.OUTPUT
-            pin.value = True
-            self.pump_configuration[pump]["pin"] = pin
 
         self.leds.stopCycle()
         self.leds.shutdownSequence()
@@ -96,12 +90,27 @@ class Bartender(MenuDelegate):
 
     @staticmethod
     def readPumpConfiguration():
-        return json.load(open('config/pump_config.json'))
+        config = json.load(open('config/pump_config.json'))
+        for pump in config.keys():
+            pinId = config[pump]["pin"]
+            pin = digitalio.DigitalInOut(Pin(pinId))
+            pin.direction = digitalio.Direction.OUTPUT
+            pin.value = True
+            config[pump]["pin"] = pin
+        return config
 
     @staticmethod
     def writePumpConfiguration(configuration):
+        jsonData = {}
+        # create a deep copy to change the pins from objects back to ints
+        for pump in configuration.keys():
+            jsonData[pump] = {
+                "value": configuration[pump]["value"],
+                "name": configuration[pump]["name"],
+                "pin": configuration[pump]["pin"]._pin.id
+            }
         with open("config/pump_config.json", "w") as jsonFile:
-            json.dump(configuration, jsonFile)
+            json.dump(jsonData, jsonFile)
 
     def buildMenu(self, drink_list, drink_options):
         # create a new main menu
