@@ -10,10 +10,15 @@ class Led:
     pixel: NeoPixel
     cycleRunning: bool
     cycleThread: Thread
+    baseColor: "tuple[int, int, int]"
 
-    def __init__(self, leds: NeoPixel) -> None:
+    def __init__(self, leds: NeoPixel, baseColor) -> None:
         self.pixel = leds
         self.cycleRunning = False
+        self.baseColor = baseColor
+
+    def base(self):
+        self.pixel.fill(self.baseColor)
 
     def clear(self):
         self.pixel.fill((0, 0, 0))
@@ -21,7 +26,7 @@ class Led:
     def shutdownSequence(self):
         for i in range(0, len(self.pixel)):
             # turn lights off
-            self.pixel[i] = (0, 0, 0)
+            self.pixel[i] = self.baseColor
             time.sleep(SLEEP_TIME)
 
     def powerUpSequence(self):

@@ -29,7 +29,8 @@ RIGHT_PIN_BOUNCE = 500
 
 NUMBER_NEOPIXELS = 12
 NEOPIXEL_PIN = board.D18
-NEOPIXEL_BRIGHTNESS = 0.1
+NEOPIXEL_BRIGHTNESS = 0.5
+BASE_COLOR = (50, 0, 0)
 
 FLOW_RATE = 10/100.0
 
@@ -58,7 +59,7 @@ class Bartender(MenuDelegate):
 
         # setup led strip:
         self.leds = Led(neopixel.NeoPixel(
-            NEOPIXEL_PIN, NUMBER_NEOPIXELS, brightness=NEOPIXEL_BRIGHTNESS))
+            NEOPIXEL_PIN, NUMBER_NEOPIXELS, brightness=NEOPIXEL_BRIGHTNESS), BASE_COLOR)
         self.leds.clear()
         self.leds.powerUpSequence()
         self.leds.startCycle()
