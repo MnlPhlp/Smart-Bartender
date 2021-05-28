@@ -56,7 +56,7 @@ class BartenderServer():
     def stopEndpoint(self):
         Thread(target=self.bartender.stop).start()
         message = '<span class="message">stopping current drink</span>'
-        message += '<br><a href="/"><button>back</button></a>'
+        message += '<a href="/"><button>back</button></a>'
         return html(message)
 
     def loadValidDrinks(self):
