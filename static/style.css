@@ -1,12 +1,12 @@
 button{
     font-size: 4em;
     padding: 20px;
-    height: 100%
 }
 
 .column{
     grid-area: col;
     width: 100%;
+    height: 100%
 }
 
 .row{
@@ -18,6 +18,10 @@ button{
     text-align: center;
     gap: 5px;
     margin-bottom: 5px;
+}
+
+.message{
+    font-size: 2em;
 }
 
 @media screen and (max-width: 1080px) {

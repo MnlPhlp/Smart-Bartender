@@ -54,8 +54,10 @@ class BartenderServer():
         return html(body)
 
     def stopEndpoint(self):
-        self.bartender.stop()
-        return html("stopping current drink")
+        Thread(target=self.bartender.stop).start()
+        message = '<span class="message">stopping current drink</span>'
+        message += '<br><a href="/"><button>back</button></a>'
+        return html(message)
 
     def loadValidDrinks(self):
         for drink in drink_list:
@@ -81,7 +83,10 @@ class BartenderServer():
             return html('kein Getränk angegeben')
 
         drink = str(request.args.get("drink"))
-        return html(self.makeDrink(drink))
+        message = f'<span class="message">{html(self.makeDrink(drink))}</span>'
+        message += '<br><a href="/stop"><button>stop</button></a>'
+        message += '<br><a href="/"><button>back</button></a>'
+        return message
 
     def makeDrink(self, drink):
         # check if drink is valid
