@@ -35,6 +35,7 @@ class BartenderServer():
         self.app.add_url_rule("/stop", "stop", self.stopEndpoint)
         self.app.add_url_rule("/", "index", self.indexHandler)
         self.app.add_url_rule("/style.css", "css", self.cssHandler)
+        self.app.add_url_rule("/favicon.ico", "favicon", self.favicon)
 
     def start(self):
         defineAlexaSkill(self.app, self)
@@ -44,6 +45,10 @@ class BartenderServer():
 
     def cssHandler(self):
         with open("static/style.css", "rt") as f:
+            return f.read()
+
+    def favicon(self):
+        with open("static/favicon.ico", "rb") as f:
             return f.read()
 
     def indexHandler(self):
