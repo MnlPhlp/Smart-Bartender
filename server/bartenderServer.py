@@ -37,7 +37,7 @@ class BartenderServer():
         self.app.add_url_rule("/style.css", "css", self.cssHandler)
 
     def start(self):
-        defineAlexaSkill(self.app, self.makeDrink)
+        defineAlexaSkill(self.app, self)
         self.serverThread = Thread(
             target=lambda: self.app.run(host="0.0.0.0", port=8080))
         self.serverThread.start()

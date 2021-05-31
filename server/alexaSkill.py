@@ -2,12 +2,12 @@ from flask_ask import Ask, session, question, statement
 from flask import request
 
 
-def defineAlexaSkill(app, drinkCallback):
+def defineAlexaSkill(app, bartenderServer):
     ask = Ask(app, "/")
 
     @ask.launch
     def launch():
-        speech_text = "welcome to the smart bartender"
+        speech_text = "smart barkeeper ist gestartet"
         print(speech_text)
         return question(speech_text).reprompt(speech_text).simple_card(speech_text)
 
@@ -21,13 +21,18 @@ def defineAlexaSkill(app, drinkCallback):
         except KeyError:
             return "der angegebene Drink ist nicht verfügbar"
         print("drink intent called with drink: "+drink)
-        message = drinkCallback(drink)
-        return statement(message)
+        resp = question(bartenderServer.makeDrink(drink))
+        return resp
 
     @ask.intent('AMAZON.HelpIntent')
     def help():
         speech_text = 'You can say hello to me!'
         return question(speech_text).reprompt(speech_text).simple_card('HelloWorld', speech_text)
+
+    @ask.intent('AMAZON.StopIntent')
+    def stop():
+        bartenderServer.bartender.stop()
+        return statement("stoppe den aktuellen drink")
 
     @ask.session_ended
     def session_ended():
