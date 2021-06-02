@@ -80,8 +80,12 @@ class Bartender(MenuDelegate):
         self.btn2 = Debouncer(pin2)
 
         # configure screen
-        # adafruit_ssd1306.SSD1306_I2C(SCREEN_WIDTH, SCREEN_HEIGHT, board.I2C(), addr=0x3C))
-        self.display = Display(mockDisplay())
+        try:
+            dsp = adafruit_ssd1306.SSD1306_I2C(
+                SCREEN_WIDTH, SCREEN_HEIGHT, board.I2C(), addr=0x3C)
+        except:
+            dsp = mockDisplay()
+        self.display = Display(dsp)
         # Clear display.
         self.display.setup()
         self.display.show()
