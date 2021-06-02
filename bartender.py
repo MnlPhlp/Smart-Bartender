@@ -1,7 +1,7 @@
 from multiprocessing import Process
 from helper.ledHelper import Led
 from server.bartenderServer import BartenderServer
-from helper.displayHelper import Display
+from helper.displayHelper import Display, mockDisplay
 import time
 import json
 import threading
@@ -52,6 +52,7 @@ logger.addHandler(fileHandler)
 class Bartender(MenuDelegate):
     leds: Led
     server: BartenderServer
+    stats: dict
 
     def __init__(self):
         self.running = False
@@ -63,6 +64,9 @@ class Bartender(MenuDelegate):
         self.leds.clear()
         self.leds.powerUpSequence()
         self.leds.startCycle()
+
+        self.stats = self.loadStats()
+        print(self.stats)
 
         # setup buttons
         pin1 = digitalio.DigitalInOut(LEFT_BTN_PIN)
@@ -76,8 +80,8 @@ class Bartender(MenuDelegate):
         self.btn2 = Debouncer(pin2)
 
         # configure screen
-        self.display = Display(adafruit_ssd1306.SSD1306_I2C(
-            SCREEN_WIDTH, SCREEN_HEIGHT, board.I2C(), addr=0x3C))
+        # adafruit_ssd1306.SSD1306_I2C(SCREEN_WIDTH, SCREEN_HEIGHT, board.I2C(), addr=0x3C))
+        self.display = Display(mockDisplay())
         # Clear display.
         self.display.setup()
         self.display.show()
@@ -287,6 +291,7 @@ class Bartender(MenuDelegate):
         pumps = self.pump_configuration
         for pump in [pumps[key] for key in pumps if pumps[key]["value"] in ingredients]:
             waitTime = ingredients[pump["value"]] * FLOW_RATE
+            self.addStats(drink, ingredients)
             if (waitTime > maxTime):
                 maxTime = waitTime
             pump_t = threading.Thread(
@@ -313,6 +318,28 @@ class Bartender(MenuDelegate):
 
         # reenable interrupts
         self.running = False
+
+    def addStats(self, drink, ingredients):
+        # create entries if they don't exist
+        if not drink in self.stats:
+            self.stats[drink] = {}
+            for ing in ingredients:
+                self.stats[drink][ing] = 0
+        # add the volume to the entries
+        for ing in ingredients:
+            self.stats[drink][ing] += ingredients[ing]
+        self.saveStats()
+
+    def loadStats(self):
+        try:
+            with open("stats.json", "rt") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return {}
+
+    def saveStats(self):
+        with open("stats.json", "wt") as f:
+            return json.dump(self.stats, f)
 
     def left_btn(self):
         logging.info("left button pressed")

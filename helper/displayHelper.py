@@ -50,3 +50,15 @@ class Display:
                 return
             except Exception as e:
                 print(e)
+
+
+class mockDisplay():
+    def __init__(self) -> None:
+        self.width = 128
+        self.height = 64
+
+    def image(self, img):
+        pass
+
+    def show(self):
+        pass
