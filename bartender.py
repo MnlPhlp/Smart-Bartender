@@ -2,6 +2,7 @@ from multiprocessing import Process
 from helper.ledHelper import Led
 from server.bartenderServer import BartenderServer
 from helper.displayHelper import Display, mockDisplay
+from datetime import date
 import time
 import json
 import threading
@@ -320,14 +321,18 @@ class Bartender(MenuDelegate):
         self.running = False
 
     def addStats(self, drink, ingredients):
+        today = date.today().strftime("%d.%m.%Y")
         # create entries if they don't exist
-        if not drink in self.stats:
-            self.stats[drink] = {}
+        if not today in self.stats:
+            self.stats[today] = {}
+        stats = self.stats[today]
+        if not drink in stats:
+            stats[drink] = {}
             for ing in ingredients:
-                self.stats[drink][ing] = 0
+                stats[drink][ing] = 0
         # add the volume to the entries
         for ing in ingredients:
-            self.stats[drink][ing] += ingredients[ing]
+            stats[drink][ing] += ingredients[ing]
         self.saveStats()
 
     def loadStats(self):
