@@ -2,7 +2,7 @@ from multiprocessing import Process
 from helper.ledHelper import Led
 from server.bartenderServer import BartenderServer
 from helper.displayHelper import Display, mockDisplay
-from datetime import date
+from datetime import datetime
 import time
 import json
 import threading
@@ -67,7 +67,6 @@ class Bartender(MenuDelegate):
         self.leds.startCycle()
 
         self.stats = self.loadStats()
-        print(self.stats)
 
         # setup buttons
         pin1 = digitalio.DigitalInOut(LEFT_BTN_PIN)
@@ -321,18 +320,19 @@ class Bartender(MenuDelegate):
         self.running = False
 
     def addStats(self, drink, ingredients):
-        today = date.today().strftime("%d.%m.%Y")
+        time = datetime.now().strftime("%d.%m-%H")
         # create entries if they don't exist
-        if not today in self.stats:
-            self.stats[today] = {}
-        stats = self.stats[today]
+        if not time in self.stats:
+            self.stats[time] = {}
+        stats = self.stats[time]
+        total = self.stats["total"]
         if not drink in stats:
-            stats[drink] = {}
-            for ing in ingredients:
-                stats[drink][ing] = 0
+            stats[drink] = 0
+        if not drink in total:
+            total[drink] = 0
         # add the volume to the entries
-        for ing in ingredients:
-            stats[drink][ing] += ingredients[ing]
+        total[drink] += 1
+        stats[drink] = total[drink]
         self.saveStats()
 
     def loadStats(self):
@@ -340,7 +340,7 @@ class Bartender(MenuDelegate):
             with open("stats.json", "rt") as f:
                 return json.load(f)
         except FileNotFoundError:
-            return {}
+            return {"total": {}}
 
     def saveStats(self):
         with open("stats.json", "wt") as f:

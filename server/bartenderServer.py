@@ -1,11 +1,10 @@
-from os import read
-from threading import Thread, ThreadError
-import threading
+from threading import Thread
 from flask import app
-from flask import request
+from flask import request, jsonify
 from server.alexaSkill import defineAlexaSkill
 from flask import Flask
 from config.drinks import drink_list
+import matplotlib.pyplot as plt
 
 
 def html(message):
@@ -36,6 +35,8 @@ class BartenderServer():
         self.app.add_url_rule("/", "index", self.indexHandler)
         self.app.add_url_rule("/style.css", "css", self.cssHandler)
         self.app.add_url_rule("/favicon.ico", "favicon", self.favicon)
+        self.app.add_url_rule("/stats.json", "stats", self.statsJson)
+        self.app.add_url_rule("/stats", "stats graph", self.statsGraph)
 
     def start(self):
         defineAlexaSkill(self.app, self)
@@ -115,6 +116,32 @@ class BartenderServer():
                 target=lambda: self.bartender.makeDrink(name, ingredients))
             t.start()
             return f"starte {name}"
+
+    def statsJson(self):
+        return jsonify(self.bartender.stats)
+
+    def statsGraph(self):
+        dates = [date for date in self.bartender.stats.keys() if date !=
+                 "total"]
+        plt.xticks(range(len(dates)), dates)
+        plt.locator_params(axis="x", nbins=5)
+        for drink in [drink["name"] for drink in drink_list]:
+            # skip drink if there are no stats
+            if not drink in self.bartender.stats[list(dates)[0]]:
+                continue
+            data = []
+            for date in dates:
+                # skip drink if there are no stats
+                if not drink in self.bartender.stats[date]:
+                    data.append(0)
+                else:
+                    data.append(self.bartender.stats[date][drink])
+            print(drink+": "+str(data))
+            plt.plot(data, ".-", label=drink)
+        plt.legend()
+        plt.savefig("graph.svg")
+        with open("graph.svg", "rb") as f:
+            return f.read()
 
     def stop(self):
         # find a way to stop the app server
