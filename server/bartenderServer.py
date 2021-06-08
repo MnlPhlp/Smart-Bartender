@@ -1,5 +1,5 @@
+from io import StringIO
 from threading import Thread
-from flask import app
 from flask import request, jsonify
 from server.alexaSkill import defineAlexaSkill
 from flask import Flask
@@ -26,12 +26,18 @@ class BartenderServer():
     validDrinks: "dict[str,dict]" = {}
     invalidDrinks: "dict[str,dict]" = {}
     serverThread: Thread
+    user: str
+    password: str
 
-    def __init__(self, bartender):
+    def __init__(self, bartender, username, password):
         self.bartender = bartender
+        self.user = username
+        self.password = password
         self.loadValidDrinks()
-        self.app.add_url_rule("/makeDrink", "makeDrink", self.drinkEndpoint)
-        self.app.add_url_rule("/stop", "stop", self.stopEndpoint)
+        self.app.add_url_rule("/makeDrink", "makeDrink",
+                              self.requires_authorization(self.drinkEndpoint))
+        self.app.add_url_rule("/stop", "stop",
+                              self.requires_authorization(self.stopEndpoint))
         self.app.add_url_rule("/", "index", self.indexHandler)
         self.app.add_url_rule("/style.css", "css", self.cssHandler)
         self.app.add_url_rule("/favicon.ico", "favicon", self.favicon)
@@ -61,7 +67,7 @@ class BartenderServer():
 
     def stopEndpoint(self):
         Thread(target=self.bartender.stop).start()
-        message = '<span class="message">stopping current drink</span>'
+        message = '<span class="message">stopping current drink</span><br>'
         message += '<a href="/"><button>back</button></a>'
         return html(message)
 
@@ -146,3 +152,23 @@ class BartenderServer():
     def stop(self):
         # find a way to stop the app server
         pass
+
+    def ok_user_and_password(self, username, password):
+        return username == self.user and password == self.password
+
+    def authenticate(self):
+        message = {'message': "Authenticate."}
+        resp = jsonify(message)
+
+        resp.status_code = 401
+        resp.headers['WWW-Authenticate'] = 'Basic realm="Main"'
+
+        return resp
+
+    def requires_authorization(self, f):
+        def decorated(*args, **kwargs):
+            auth = request.authorization
+            if not auth or not self.ok_user_and_password(auth.username, auth.password):
+                return self.authenticate()
+            return f(*args, **kwargs)
+        return decorated

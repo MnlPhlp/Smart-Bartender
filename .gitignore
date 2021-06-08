@@ -4,3 +4,4 @@ __pycache__
 *.key
 stats.json
 *.svg
+start.sh
