@@ -15,6 +15,7 @@ from adafruit_blinka.microcontroller.bcm283x.pin import Pin
 import logging
 from logging.handlers import RotatingFileHandler
 from sys import stdout
+import argparse
 
 from menu import MenuItem, Menu, Back, MenuContext, MenuDelegate
 from config.drinks import drink_list, drink_options
@@ -33,7 +34,7 @@ NEOPIXEL_PIN = board.D18
 NEOPIXEL_BRIGHTNESS = 0.5
 BASE_COLOR = (50, 0, 0)
 
-FLOW_RATE = 10/100.0
+FLOW_RATE = 1/27.5
 
 # setup logging
 logger = logging.getLogger()
@@ -402,9 +403,15 @@ class Bartender(MenuDelegate):
         self.leds.clear()
 
 
+p = argparse.ArgumentParser()
+p.add_argument("-u", "--user", dest="username", type=str, required=True)
+p.add_argument("-p", "--pass", dest="password", type=str, required=True)
+p.add_argument("-a", "--alexaUser", dest="alexaUser", type=str, required=True)
+args = p.parse_args()
 bartender = Bartender()
 bartender.buildMenu(drink_list, drink_options)
-bartender.server = BartenderServer(bartender)
+bartender.server = BartenderServer(
+    bartender, args.username, args.password, args.alexaUser)
 logging.info("starting server")
 bartender.server.start()
 logging.info("starting button handling")

@@ -3,3 +3,5 @@ __pycache__
 *.crt
 *.key
 stats.json
+*.svg
+start.sh

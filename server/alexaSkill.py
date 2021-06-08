@@ -2,17 +2,24 @@ from flask_ask import Ask, session, question, statement
 from flask import request
 
 
-def defineAlexaSkill(app, bartenderServer):
+def defineAlexaSkill(app, bartenderServer, alexaUser):
     ask = Ask(app, "/")
+
+    def checkUserId() -> bool:
+        return request.get_json()["session"]["user"]["userId"] == alexaUser
 
     @ask.launch
     def launch():
+        if not checkUserId():
+            return(statement("ungültige userId"))
         speech_text = "smart barkeeper ist gestartet"
         print(speech_text)
         return question(speech_text).reprompt(speech_text).simple_card(speech_text)
 
     @ask.intent('DrinkIntent')
     def drink_intent():
+        if not checkUserId():
+            return(statement("ungültige userId"))
         content = request.get_json()
         drink = ""
         try:
@@ -24,13 +31,10 @@ def defineAlexaSkill(app, bartenderServer):
         resp = question(bartenderServer.makeDrink(drink))
         return resp
 
-    @ask.intent('AMAZON.HelpIntent')
-    def help():
-        speech_text = 'You can say hello to me!'
-        return question(speech_text).reprompt(speech_text).simple_card('HelloWorld', speech_text)
-
     @ask.intent('AMAZON.StopIntent')
     def stop():
+        if not checkUserId():
+            return(statement("ungültige userId"))
         bartenderServer.bartender.stop()
         return statement("stoppe den aktuellen drink")
 

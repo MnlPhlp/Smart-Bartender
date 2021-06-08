@@ -74,7 +74,15 @@ drink_list = [
             "asbach": 50,
             "coke": 150
         }
+    },
+    {
+        "name": "Cola",
+        "key": "cola",
+        "ingredients": {
+            "coke": 200
+        }
     }
+
 ]
 
 drink_options = [
