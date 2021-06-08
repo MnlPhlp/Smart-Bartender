@@ -1,32 +1,32 @@
 {
-	"pump_1": {
-		"name": "Pump 1",
-		"pin": 0,
-		"value": "jacky"
-	},
-	"pump_2": {
-		"name": "Pump 2",
-		"pin": 5,
-		"value": "coke"
-	},
-	"pump_3": {
-		"name": "Pump 3",
-		"pin": 6,
-		"value": "captain"
-	},
-	"pump_4": {
-		"name": "Pump 4",
-		"pin": 13,
-		"value": null
-	},
-	"pump_5": {
-		"name": "Pump 5",
-		"pin": 19,
-		"value": null
-	},
-	"pump_6": {
-		"name": "Pump 6",
-		"pin": 26,
-		"value": null
-	}
+    "pump_1": {
+        "value": "captain",
+        "name": "Pump 1",
+        "pin": 0
+    },
+    "pump_2": {
+        "value": "coke",
+        "name": "Pump 2",
+        "pin": 5
+    },
+    "pump_3": {
+        "value": "jacky",
+        "name": "Pump 3",
+        "pin": 6
+    },
+    "pump_4": {
+        "value": null,
+        "name": "Pump 4",
+        "pin": 13
+    },
+    "pump_5": {
+        "value": null,
+        "name": "Pump 5",
+        "pin": 19
+    },
+    "pump_6": {
+        "value": null,
+        "name": "Pump 6",
+        "pin": 26
+    }
 }
