@@ -29,7 +29,7 @@ class BartenderServer():
     user: str
     password: str
 
-    def __init__(self, bartender, username, password):
+    def __init__(self, bartender, username, password, alexaUser):
         self.bartender = bartender
         self.user = username
         self.password = password
@@ -43,9 +43,9 @@ class BartenderServer():
         self.app.add_url_rule("/favicon.ico", "favicon", self.favicon)
         self.app.add_url_rule("/stats.json", "stats", self.statsJson)
         self.app.add_url_rule("/stats", "stats graph", self.statsGraph)
+        defineAlexaSkill(self.app, self, alexaUser)
 
     def start(self):
-        defineAlexaSkill(self.app, self)
         self.serverThread = Thread(
             target=lambda: self.app.run(host="0.0.0.0", port=8080))
         self.serverThread.start()
