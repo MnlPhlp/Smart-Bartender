@@ -9,4 +9,14 @@ For the building and electronics part watch the video or check the [hackster.io 
 - using a [raspberry pi zero](https://www.raspberrypi.org/products/raspberry-pi-zero/) for control
 
 ## setup
-To setup your pi you need to first install [circuitpython](https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi)
+To setup your pi you need to first install [circuitpython](https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi). After that run:
+```
+curl https://raw.githubusercontent.com/MnlPhlp/Smart-Bartender/master/setup.sh | bash
+```
+This will clone the repository, create a venv and install necessary libraries. 
+## start
+To run the bartender `cd` into Smart-Bartender and start the program with:
+```
+sudo python bartender.py
+```
+> sudo is required for the neopixels to work
