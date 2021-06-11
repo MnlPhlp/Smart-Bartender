@@ -116,7 +116,9 @@ class Bartender(MenuDelegate):
             jsonData[pump] = {
                 "value": configuration[pump]["value"],
                 "name": configuration[pump]["name"],
-                "pin": configuration[pump]["pin"]._pin.id
+                "pin": configuration[pump]["pin"]._pin.id,
+                "rate": configuration[pump]["rate"]
+
             }
         with open("config/pump_config.json", "w") as jsonFile:
             json.dump(jsonData, jsonFile)

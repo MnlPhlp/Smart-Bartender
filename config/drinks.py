@@ -125,4 +125,5 @@ drink_options = [
     {"name": "Asbach", "value": "asbach"},
     {"name": "Bacardi", "value": "bacardi"},
     {"name": "Annanas", "value": "annanas"},
+    {"name": "Nichts", "value": "none"}
 ]
