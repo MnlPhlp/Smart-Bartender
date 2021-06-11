@@ -6,7 +6,11 @@ def defineAlexaSkill(app, bartenderServer, alexaUser):
     ask = Ask(app, "/")
 
     def checkUserId() -> bool:
-        return request.get_json()["session"]["user"]["userId"] == alexaUser
+        userid=request.get_json()["session"]["user"]["userId"]
+        ok = userid == alexaUser
+        if not ok:
+            print("illegal request from "+userid)
+        return ok
 
     @ask.launch
     def launch():

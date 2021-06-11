@@ -131,7 +131,9 @@ class BartenderServer():
                  "total"]
         plt.xticks(range(len(dates)), dates)
         plt.locator_params(axis="x", nbins=5)
-        for drink in [drink["name"] for drink in drink_list]:
+        drinks=[drink["name"] for drink in drink_list]
+        plotted = {}
+        for drink in drinks:
             # skip drink if there are no stats
             if not drink in self.bartender.stats["total"]:
                 continue
@@ -139,16 +141,17 @@ class BartenderServer():
             for date in dates:
                 # skip drink if there are no stats
                 if not drink in self.bartender.stats[date]:
-                    if not drink in self.bartender.stats["total"]:
+                    if not drink in plotted:
                         data.append(0)
                     else:
-                        data.append(self.bartender.stats["total"][drink])
+                        data.append(plotted[drink])
                 else:
+                    plotted[drink]=self.bartender.stats[date][drink]
                     data.append(self.bartender.stats[date][drink])
-            print(drink+": "+str(data))
-            plt.plot(data, ".-", label=drink)
+            plt.plot(data, "-", label=drink)
         plt.legend()
         plt.savefig("graph.svg")
+        plt.close()
         with open("graph.svg", "rb") as f:
             return f.read()
 
