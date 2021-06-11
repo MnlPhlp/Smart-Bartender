@@ -404,9 +404,9 @@ class Bartender(MenuDelegate):
 
 
 p = argparse.ArgumentParser()
-p.add_argument("-u", "--user", dest="username", type=str, required=True)
-p.add_argument("-p", "--pass", dest="password", type=str, required=True)
-p.add_argument("-a", "--alexaUser", dest="alexaUser", type=str, required=True)
+p.add_argument("-u", "--user", dest="username", type=str, default="")
+p.add_argument("-p", "--pass", dest="password", type=str, default="")
+p.add_argument("-a", "--alexaUser", dest="alexaUser", type=str, default="")
 args = p.parse_args()
 bartender = Bartender()
 bartender.buildMenu(drink_list, drink_options)

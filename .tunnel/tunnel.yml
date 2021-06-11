@@ -1,6 +1,0 @@
-server_addr: tunnel.manuel.sh:5223
-tunnels:
-    barkeeper:
-        proto: http
-        addr: localhost:8080
-        host: barkeeper.manuel.sh
