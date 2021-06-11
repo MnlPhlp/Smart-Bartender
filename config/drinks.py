@@ -109,6 +109,14 @@ drink_list = [
             "vodka": 30,
             "annanas": 170
         }
+    },
+    {
+        "name": "Bacardi-Annanas",
+        "key": "bacardiAnnanas",
+        "ingredients":{
+            "bacard": 30,
+            "annanas": 170
+        }
     }
 
 
