@@ -1,18 +1,20 @@
+
+
 # drinks.py
 drink_list = [
     {
         "name": "Rum & Coke",
         "key": "rumCoke",
         "ingredients": {
-            "rum": 50,
-            "coke": 150
+            "rum": 40,
+            "coke": 160
         }
     }, {
         "name": "Gin & Tonic",
         "key": "ginTonic",
         "ingredients": {
-            "gin": 50,
-            "tonic": 150
+            "gin": 40,
+            "tonic": 160
         }
     }, {
         "name": "Long Island",
@@ -29,22 +31,22 @@ drink_list = [
         "name": "Screwdriver",
         "key": "screwdriver",
         "ingredients": {
-            "vodka": 50,
-            "oj": 150
+            "vodka": 40,
+            "oj": 160
         }
     }, {
         "name": "Margarita",
         "key": "margarita",
         "ingredients": {
-            "tequila": 50,
-            "mmix": 150
+            "tequila": 40,
+            "mmix": 160
         }
     }, {
         "name": "Gin & Juice",
         "key": "ginJuice",
         "ingredients": {
-            "gin": 50,
-            "oj": 150
+            "gin": 40,
+            "oj": 160
         }
     }, {
         "name": "Tequila Sunrise",
@@ -64,15 +66,15 @@ drink_list = [
         "name": "Captain Cola",
         "key": "captainCola",
         "ingredients": {
-            "captain": 50,
-            "coke": 150
+            "captain": 40,
+            "coke": 160
         }
     }, {
         "name": "Asbach Cola",
         "key": "asbachCola",
         "ingredients": {
-            "asbach": 50,
-            "coke": 150
+            "asbach": 40,
+            "coke": 160
         }
     },
     {
@@ -81,7 +83,34 @@ drink_list = [
         "ingredients": {
             "coke": 200
         }
+    },
+    {
+        "name": "Bacardi Cola",
+        "key": "bacardiCola",
+        "ingredients": {
+            "coke": 160,
+            "bacardi": 40,
+        }
+
+    },
+    {
+        "name": "Brass Monkey",
+        "key": "brassMonkey",
+        "ingredients":{
+            "coke": 160,
+            "vodka": 20,
+            "bacardi": 20,
+        }
+    },
+    {
+        "name": "Jackhammer",
+        "key": "jackhammer",
+        "ingredients":{
+            "vodka": 30,
+            "annanas": 170
+        }
     }
+
 
 ]
 
@@ -94,4 +123,6 @@ drink_options = [
     {"name": "Cola", "value": "coke"},
     {"name": "O-Saft", "value": "oj"},
     {"name": "Asbach", "value": "asbach"},
+    {"name": "Bacardi", "value": "bacardi"},
+    {"name": "Annanas", "value": "annanas"},
 ]

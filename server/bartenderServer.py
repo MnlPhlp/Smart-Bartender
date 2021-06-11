@@ -133,13 +133,16 @@ class BartenderServer():
         plt.locator_params(axis="x", nbins=5)
         for drink in [drink["name"] for drink in drink_list]:
             # skip drink if there are no stats
-            if not drink in self.bartender.stats[list(dates)[0]]:
+            if not drink in self.bartender.stats["total"]:
                 continue
             data = []
             for date in dates:
                 # skip drink if there are no stats
                 if not drink in self.bartender.stats[date]:
-                    data.append(0)
+                    if not drink in self.bartender.stats["total"]:
+                        data.append(0)
+                    else:
+                        data.append(self.bartender.stats["total"][drink])
                 else:
                     data.append(self.bartender.stats[date][drink])
             print(drink+": "+str(data))

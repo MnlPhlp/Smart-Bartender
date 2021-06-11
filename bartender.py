@@ -34,8 +34,6 @@ NEOPIXEL_PIN = board.D18
 NEOPIXEL_BRIGHTNESS = 0.5
 BASE_COLOR = (50, 0, 0)
 
-FLOW_RATE = 1/27.5
-
 # setup logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -73,12 +71,12 @@ class Bartender(MenuDelegate):
         pin1 = digitalio.DigitalInOut(LEFT_BTN_PIN)
         pin1.direction = digitalio.Direction.INPUT
         pin1.pull = digitalio.Pull.UP
-        self.btn1 = Debouncer(pin1)
+        self.btn1 = Debouncer(pin1,interval=0.2)
 
         pin2 = digitalio.DigitalInOut(RIGHT_BTN_PIN)
         pin2.direction = digitalio.Direction.INPUT
         pin2.pull = digitalio.Pull.UP
-        self.btn2 = Debouncer(pin2)
+        self.btn2 = Debouncer(pin2,interval=0.2)
 
         # configure screen
         try:
@@ -283,6 +281,7 @@ class Bartender(MenuDelegate):
     def makeDrink(self, drink, ingredients):
         # cancel any button presses while the drink is being made
         self.running = True
+        self.addStats(drink, ingredients)
 
         # display the drink in the making
         self.display.clear()
@@ -296,8 +295,7 @@ class Bartender(MenuDelegate):
         pumpThreads = []
         pumps = self.pump_configuration
         for pump in [pumps[key] for key in pumps if pumps[key]["value"] in ingredients]:
-            waitTime = ingredients[pump["value"]] * FLOW_RATE
-            self.addStats(drink, ingredients)
+            waitTime = ingredients[pump["value"]]/pump["rate"]
             if (waitTime > maxTime):
                 maxTime = waitTime
             pump_t = threading.Thread(
@@ -326,7 +324,7 @@ class Bartender(MenuDelegate):
         self.running = False
 
     def addStats(self, drink, ingredients):
-        time = datetime.now().strftime("%d.%m-%H")
+        time = datetime.now().strftime("%d.%m-%H:%M")
         # create entries if they don't exist
         if not time in self.stats:
             self.stats[time] = {}
