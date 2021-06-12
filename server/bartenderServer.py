@@ -5,6 +5,7 @@ from server.alexaSkill import defineAlexaSkill
 from flask import Flask
 from config.drinks import drink_list
 import matplotlib.pyplot as plt
+import datetime
 
 
 def html(message):
@@ -127,11 +128,11 @@ class BartenderServer():
         return jsonify(self.bartender.stats)
 
     def statsGraph(self):
-        dates = [date for date in self.bartender.stats.keys() if date !=
+        dates = [datetime.strptime(date) for date in self.bartender.stats.keys() if date !=
                  "total"]
         plt.xticks(range(len(dates)), dates)
         plt.locator_params(axis="x", nbins=5)
-        drinks=[drink["name"] for drink in drink_list]
+        drinks = [drink["name"] for drink in drink_list]
         plotted = {}
         for drink in drinks:
             # skip drink if there are no stats
@@ -146,7 +147,7 @@ class BartenderServer():
                     else:
                         data.append(plotted[drink])
                 else:
-                    plotted[drink]=self.bartender.stats[date][drink]
+                    plotted[drink] = self.bartender.stats[date][drink]
                     data.append(self.bartender.stats[date][drink])
             plt.plot(data, "-", label=drink)
         plt.legend()
