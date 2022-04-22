@@ -1,0 +1,4 @@
+wheel>=0.37.0
+matplotlib==3.4.2
+Werkzeug==0.14.1
+numpy==1.21.0

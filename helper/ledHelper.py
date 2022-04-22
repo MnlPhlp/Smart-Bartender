@@ -1,5 +1,9 @@
 from threading import Thread
-from neopixel import NeoPixel
+import os
+if os.uname().machine == "x86_64":
+    import mock.NeoPixelMock as NeoPixel
+else:
+    from neopixel import NeoPixel
 import time
 
 SLEEP_TIME = 0.05
