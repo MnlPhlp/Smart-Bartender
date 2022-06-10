@@ -8,4 +8,8 @@ if ( uname -a | grep x86_64 ); then
 else
     pip install -r requirements.txt
 fi
-pip install https://github.com/MnlPhlp/flask-ask/archive/460bf1ee1593103c2891d512e1dff86d31ece8bb.zip
+pip install https://github.com/MnlPhlp/flask-ask/archive/refs/tags/v0.9.0.zip
+
+echo "activate venv and start server:"
+echo ". ./venv/bin/activate"
+echo "python run.py"
