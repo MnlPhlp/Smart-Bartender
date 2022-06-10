@@ -1,7 +1,4 @@
 #!/bin/bash
-#echo cloning repository
-#git clone https://github.com/MnlPhlp/Smart-Bartender.git
-#cd Smart-Bartender
 echo creating venv
 python3 -m venv venv
 source ./venv/bin/activate
@@ -11,4 +8,4 @@ if ( uname -a | grep x86_64 ); then
 else
     pip install -r requirements.txt
 fi
-pip install https://github.com/johnwheeler/flask-ask/archive/55960acee3e91c3ae66208b0b020123c860439cd.zip
+pip install https://github.com/MnlPhlp/flask-ask/archive/460bf1ee1593103c2891d512e1dff86d31ece8bb.zip

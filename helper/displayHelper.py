@@ -1,5 +1,11 @@
 from PIL import Image, ImageDraw, ImageFont
-from adafruit_ssd1306 import SSD1306_I2C
+import os
+
+if os.uname().machine == "x86_64":
+    import mock.SSD1306_I2CMock as SSD1306_I2C
+else:
+    from adafruit_ssd1306 import SSD1306_I2C
+
 
 
 class Display:

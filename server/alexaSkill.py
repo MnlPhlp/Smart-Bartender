@@ -1,4 +1,4 @@
-from flask_ask import Ask, session, question, statement
+from flask_ask import Ask, question, statement
 from flask import request
 
 

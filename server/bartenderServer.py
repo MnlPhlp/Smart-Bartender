@@ -1,5 +1,6 @@
 from io import StringIO
 from threading import Thread
+from multiprocessing import Process
 from flask import request, jsonify
 from server.alexaSkill import defineAlexaSkill
 from flask import Flask
@@ -26,7 +27,7 @@ class BartenderServer():
     app = Flask(__name__)
     validDrinks: "dict[str,dict]" = {}
     invalidDrinks: "dict[str,dict]" = {}
-    serverThread: Thread
+    serverProc: Process
     user: str
     password: str
 
@@ -47,9 +48,8 @@ class BartenderServer():
         defineAlexaSkill(self.app, self, alexaUser)
 
     def start(self):
-        self.serverThread = Thread(
-            target=lambda: self.app.run(host="0.0.0.0", port=8080))
-        self.serverThread.start()
+        self.serverProc = Process(target=self.app.run,kwargs={"host": "0.0.0.0", "port":8080})
+        self.serverProc.start()
 
     def cssHandler(self):
         with open("static/style.css", "rt") as f:
@@ -157,8 +157,9 @@ class BartenderServer():
             return f.read()
 
     def stop(self):
-        # find a way to stop the app server
-        pass
+        # stop the app server
+        self.serverProc.terminate()
+        self.serverProc.join()
 
     def ok_user_and_password(self, username, password):
         return username == self.user and password == self.password

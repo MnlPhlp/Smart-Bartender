@@ -100,9 +100,9 @@ class MenuContext(object):
 		"""
 		selection = self.currentMenu.getSelection()
 		if (not self.delegate.menuItemClicked(selection)):
-			if (selection.type is "menu"):
+			if (selection.type == "menu"):
 				self.setMenu(selection)
-			elif (selection.type is "back"):
+			elif (selection.type == "back"):
 				if (not self.currentMenu.parent):
 					raise ValueError("Cannot navigate back when parent is None")
 				self.setMenu(self.currentMenu.parent)
