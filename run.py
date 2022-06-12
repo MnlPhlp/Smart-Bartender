@@ -14,11 +14,40 @@ import logging
 from logging.handlers import RotatingFileHandler
 from sys import stdout
 import argparse
+import requests
 
 from menu import MenuItem, Menu, Back, MenuContext, MenuDelegate
-from config.drinks import drink_list, drink_options
+from config.drinks import drink_list as drink_list_import, drink_options as drink_options_import
 
-# setup logging
+
+def loadDrinks(server, username, password):
+    resp = requests.get(f"{server}/v1/cocktail/fav",
+                        headers={
+                            "Content-Type": "application/json",
+                            "username": username,
+                            "password": password,
+                        })
+    if resp.status_code != 200:
+        logging.warn("no cocktails loaded from server.")
+        # return imported values
+        return drink_list_import, drink_options_import
+    print(resp.content)
+    resp = json.loads(resp.content)
+    drink_list = []
+    drink_options = set()
+    cocktail = {}
+    for cocktailJson in resp["Data"]:
+        cocktail["name"] = cocktailJson["Name"]
+        cocktail["ingredients"] = {}
+        for ing in cocktailJson["Ingredients"]:
+            drink_options.add(ing["Name"])
+            cocktail["ingredients"][ing["Name"]] = ing["Amount"]
+        print(cocktail)
+        drink_list.append(cocktail)
+    drink_options = list(drink_options)
+    return drink_list, drink_options
+
+    # setup logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 # log to cli
@@ -36,12 +65,18 @@ logger.addHandler(fileHandler)
 p = argparse.ArgumentParser()
 p.add_argument("-u", "--user", dest="username", type=str, default="")
 p.add_argument("-p", "--pass", dest="password", type=str, default="")
-p.add_argument("-a", "--alexaUser", dest="alexaUser", type=str, default="")
+p.add_argument("-a", "--alexaUser", dest="alexaUser",
+               type=str, default="")
+p.add_argument("-s", "--server", dest="server",
+               type=str, default="http://localhost:1234")
+
 args = p.parse_args()
+drink_list, drink_options = loadDrinks(
+    args.server, args.username, args.password)
 bartender = Bartender()
 bartender.buildMenu(drink_list, drink_options)
 server = BartenderServer(
-    bartender, args.username, args.password, args.alexaUser)
+    bartender, drink_list, args.username, args.password, args.alexaUser)
 logging.info("starting server")
 server.start()
 logging.info("starting button handling")
@@ -58,4 +93,3 @@ finally:
     bartender.shutdown()
     logging.info("stopping server")
     server.stop()
-

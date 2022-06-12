@@ -4,7 +4,6 @@ from multiprocessing import Process
 from flask import request, jsonify
 from server.alexaSkill import defineAlexaSkill
 from flask import Flask
-from config.drinks import drink_list
 import matplotlib.pyplot as plt
 from datetime import datetime
 
@@ -30,9 +29,11 @@ class BartenderServer():
     serverProc: Process
     user: str
     password: str
+    drink_list: list
 
-    def __init__(self, bartender, username, password, alexaUser):
+    def __init__(self, bartender, drink_list, username, password, alexaUser):
         self.bartender = bartender
+        self.drink_list = drink_list
         self.user = username
         self.password = password
         self.loadValidDrinks()
@@ -74,7 +75,7 @@ class BartenderServer():
         return html(message)
 
     def loadValidDrinks(self):
-        for drink in drink_list:
+        for drink in self.drink_list:
             ingredients = drink["ingredients"]
             presentIng = []
             # check if all ingredients are configured in the pump config
@@ -83,12 +84,12 @@ class BartenderServer():
                     if (ing == self.bartender.pump_configuration[p]["value"]):
                         presentIng.append(ing)
             if (len(presentIng) == len(ingredients.keys())):
-                self.validDrinks[drink["key"]] = drink
+                self.validDrinks[drink["name"]] = drink
             else:
                 # store the missing ingredients for a helpful message
                 drink["ingredients"] = [
                     i for i in ingredients if i not in presentIng]
-                self.invalidDrinks[drink["key"]] = drink
+                self.invalidDrinks[drink["name"]] = drink
 
     def drinkEndpoint(self):
         """make a drink
@@ -133,7 +134,7 @@ class BartenderServer():
                  "total"]
         plt.xticks(range(len(dates)), dates)
         plt.locator_params(axis="x", nbins=5)
-        drinks = [drink["name"] for drink in drink_list]
+        drinks = [drink["name"] for drink in self.drink_list]
         plotted = {}
         for drink in drinks:
             # skip drink if there are no stats

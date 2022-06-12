@@ -3,119 +3,105 @@
 # drinks.py
 drink_list = [
     {
-        "name": "Rum & Coke",
-        "key": "rumCoke",
+        "name": "Rum & Cola",
         "ingredients": {
-            "rum": 40,
-            "coke": 160
+            "Rum": 40,
+            "Cola": 160
         }
     }, {
         "name": "Gin & Tonic",
-        "key": "ginTonic",
         "ingredients": {
-            "gin": 40,
-            "tonic": 160
+            "Gin": 40,
+            "Tonic": 160
         }
     }, {
         "name": "Long Island",
-        "key": "longIsland",
         "ingredients": {
-            "gin": 15,
-            "rum": 15,
-            "vodka": 15,
-            "tequila": 15,
-            "coke": 100,
-            "oj": 30
+            "Gin": 15,
+            "Rum": 15,
+            "Vodka": 15,
+            "Tequila": 15,
+            "Cola": 100,
+            "Orange": 30
         }
     }, {
         "name": "Screwdriver",
-        "key": "screwdriver",
         "ingredients": {
-            "vodka": 40,
-            "oj": 160
+            "Vodka": 40,
+            "Orange": 160
         }
     }, {
         "name": "Margarita",
-        "key": "margarita",
         "ingredients": {
-            "tequila": 40,
+            "Tequila": 40,
             "mmix": 160
         }
     }, {
         "name": "Gin & Juice",
-        "key": "ginJuice",
         "ingredients": {
-            "gin": 40,
-            "oj": 160
+            "Gin": 40,
+            "Orange": 160
         }
     }, {
         "name": "Tequila Sunrise",
-        "key": "tequilaSunrise",
         "ingredients": {
-            "tequila": 50,
-            "oj": 150
+            "Tequila": 50,
+            "Orange": 150
         }
     }, {
         "name": "Jacky Cola",
-        "key": "jackyCola",
         "ingredients": {
-            "jacky": 50,
-            "coke": 150
+            "Jacky": 50,
+            "Cola": 150
         }
     }, {
         "name": "Captain Cola",
-        "key": "captainCola",
         "ingredients": {
-            "captain": 40,
-            "coke": 160
+            "Captain": 40,
+            "Cola": 160
         }
     }, {
         "name": "Asbach Cola",
         "key": "asbachCola",
         "ingredients": {
             "asbach": 40,
-            "coke": 160
+            "Cola": 160
         }
     },
     {
         "name": "Cola",
-        "key": "cola",
         "ingredients": {
-            "coke": 200
+            "Cola": 200
         }
     },
     {
         "name": "Bacardi Cola",
-        "key": "bacardiCola",
         "ingredients": {
-            "coke": 160,
-            "bacardi": 40,
+            "Cola": 160,
+            "Bacardi": 40,
         }
 
     },
     {
         "name": "Brass Monkey",
-        "key": "brassMonkey",
-        "ingredients":{
-            "coke": 160,
-            "vodka": 20,
-            "bacardi": 20,
+        "ingredients": {
+            "Cola": 160,
+            "Vodka": 20,
+            "Bacardi": 20,
         }
     },
     {
         "name": "Jackhammer",
-        "key": "jackhammer",
-        "ingredients":{
-            "vodka": 30,
-            "annanas": 170
+        "ingredients": {
+            "Vodka": 30,
+            "Annanas": 170
         }
     },
     {
         "name": "Bacardi-Annanas",
-        "key": "bacardiAnnanas",
-        "ingredients":{
-            "bacard": 30,
-            "annanas": 170
+        "ingredients": {
+            "Bacard": 30,
+            "Annanas": 170
         }
     }
 
@@ -123,15 +109,15 @@ drink_list = [
 ]
 
 drink_options = [
-    {"name": "Gin", "value": "gin"},
-    {"name": "Rum", "value": "rum"},
-    {"name": "Vodka", "value": "vodka"},
-    {"name": "Captain", "value": "captain"},
-    {"name": "Jack Daniel's", "value": "jacky"},
-    {"name": "Cola", "value": "coke"},
-    {"name": "O-Saft", "value": "oj"},
-    {"name": "Asbach", "value": "asbach"},
-    {"name": "Bacardi", "value": "bacardi"},
-    {"name": "Annanas", "value": "annanas"},
-    {"name": "Nichts", "value": "none"}
+    "Gin",
+    "Rum",
+    "Vodka",
+    "Captain",
+    "Jack Daniel's",
+    "Cola",
+    "O-Saft",
+    "Asbach",
+    "Bacardi",
+    "Annanas",
+    "Nichts",
 ]

@@ -63,9 +63,9 @@ class BartenderBase(MenuDelegate):
             # add fluid options for each pump
             for opt in drink_options:
                 # star the selected option
-                selected = "*" if opt["value"] == self.pump_configuration[p]["value"] else ""
-                config.addOption(MenuItem('pump_selection', opt["name"], {
-                                 "key": p, "value": opt["value"], "name": opt["name"]}))
+                selected = "*" if opt == self.pump_configuration[p]["value"] else ""
+                config.addOption(MenuItem('pump_selection', opt, {
+                                 "key": p, "value": opt, "name": opt}))
             # add a back button so the user can return without modifying
             config.addOption(Back("Back"))
             config.setParent(configuration_menu)
