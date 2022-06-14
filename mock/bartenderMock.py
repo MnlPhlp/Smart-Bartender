@@ -11,8 +11,16 @@ class Bartender(BartenderBase):
         # load the pump configuration from file
         self.pump_configuration = json.load(open('config/pump_config.json'))
 
+    def writePumpConfiguration(self):
+        with open("config/pump_config.json", "w") as jsonFile:
+            json.dump(self.pump_configuration, jsonFile)
+
     def handleInput(self):
-        pass
+        btn = input("press l for left or r for right")
+        if btn == "l":
+            self.left_btn()
+        if btn == "r":
+            self.right_btn()
 
     def shutdown(self):
         logging.info("EMPTY MOCK: shutdown")

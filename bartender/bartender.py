@@ -85,16 +85,15 @@ class Bartender(BartenderBase):
             config[pump]["pin"] = pin
         return config
 
-    @staticmethod
-    def writePumpConfiguration(configuration):
+    def writePumpConfiguration(self):
         jsonData = {}
         # create a deep copy to change the pins from objects back to ints
-        for pump in configuration.keys():
+        for pump in self.pump_configuration.keys():
             jsonData[pump] = {
-                "value": configuration[pump]["value"],
-                "name": configuration[pump]["name"],
-                "pin": configuration[pump]["pin"]._pin.id,
-                "rate": configuration[pump]["rate"]
+                "value": self.pump_configuration[pump]["value"],
+                "name": self.pump_configuration[pump]["name"],
+                "pin": self.pump_configuration[pump]["pin"]._pin.id,
+                "rate": self.pump_configuration[pump]["rate"]
 
             }
         with open("config/pump_config.json", "w") as jsonFile:
@@ -207,21 +206,6 @@ class Bartender(BartenderBase):
 
         # reenable interrupts
         self.running = False
-
-    def left_btn(self):
-        logging.info("left button pressed")
-        if not self.running:
-            logging.info("menu advance")
-            self.menuContext.advance()
-
-    def right_btn(self):
-        logging.info("right button pressed")
-        if not self.running:
-            logging.info("menu select")
-            self.menuContext.select()
-        else:
-            logging.info("stop")
-            self.stop()
 
     def handleInput(self):
         self.btn1.update()

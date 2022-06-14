@@ -21,17 +21,23 @@ from config.drinks import drink_list as drink_list_import, drink_options as drin
 
 
 def loadDrinks(server, username, password):
-    resp = requests.get(f"{server}/v1/cocktail/fav",
-                        headers={
-                            "Content-Type": "application/json",
-                            "username": username,
-                            "password": password,
-                        })
-    if resp.status_code != 200:
-        logging.warn("no cocktails loaded from server.")
+    try:
+        resp = requests.get(f"{server}/v1/cocktail/fav",
+                            headers={
+                                "Content-Type": "application/json",
+                                "username": username,
+                                "password": password,
+                            })
+    except Exception as err:
+        logging.warn(
+            f"no cocktails loaded from server. Error during request: {err}")
         # return imported values
         return drink_list_import, drink_options_import
-    print(resp.content)
+    if resp.status_code != 200:
+        logging.warn(
+            f"no cocktails loaded from server. Request failed: {resp.content}")
+        # return imported values
+        return drink_list_import, drink_options_import
     resp = json.loads(resp.content)
     drink_list = []
     drink_options = set()
@@ -44,8 +50,10 @@ def loadDrinks(server, username, password):
             cocktail["ingredients"][ing["Name"]] = ing["Amount"]
         print(cocktail)
         drink_list.append(cocktail)
+    drink_options.add("Nothing")
     drink_options = list(drink_options)
     return drink_list, drink_options
+
 
     # setup logging
 logger = logging.getLogger()

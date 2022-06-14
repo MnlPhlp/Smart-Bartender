@@ -131,7 +131,7 @@ class BartenderBase(MenuDelegate):
         elif(menuItem.type == "pump_selection"):
             self.pump_configuration[menuItem.attributes["key"]
                                     ]["value"] = menuItem.attributes["value"]
-            Bartender.writePumpConfiguration(self.pump_configuration)
+            self.writePumpConfiguration()
             return True
         elif(menuItem.type == "clean"):
             self.clean()
@@ -148,3 +148,18 @@ class BartenderBase(MenuDelegate):
             sleep(0.5)
         self.stopEvent.clear()
         logging.info("drink is stoped")
+
+    def left_btn(self):
+        logging.info("left button pressed")
+        if not self.running:
+            logging.info("menu advance")
+            self.menuContext.advance()
+
+    def right_btn(self):
+        logging.info("right button pressed")
+        if not self.running:
+            logging.info("menu select")
+            self.menuContext.select()
+        else:
+            logging.info("stop")
+            self.stop()
