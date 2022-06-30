@@ -34,8 +34,8 @@ class Bartender(BartenderBase):
     running: bool
     stopEvent: threading.Event
 
-    def __init__(self):
-        super(Bartender, self).__init__()
+    def __init__(self,server, username, password):
+        super(Bartender, self).__init__(server,username,password)
 
         # setup led strip:
         self.leds = Led(neopixel.NeoPixel(

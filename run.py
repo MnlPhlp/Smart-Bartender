@@ -14,48 +14,10 @@ import logging
 from logging.handlers import RotatingFileHandler
 from sys import stdout
 import argparse
-import requests
 
 from menu import MenuItem, Menu, Back, MenuContext, MenuDelegate
-from config.drinks import drink_list as drink_list_import, drink_options as drink_options_import
 
-
-def loadDrinks(server, username, password):
-    try:
-        resp = requests.get(f"{server}/v1/cocktail/fav",
-                            headers={
-                                "Content-Type": "application/json",
-                                "username": username,
-                                "password": password,
-                            })
-    except Exception as err:
-        logging.warning(
-            f"no cocktails loaded from server. Error during request: {err}")
-        # return imported values
-        return drink_list_import, drink_options_import
-    if resp.status_code != 200:
-        logging.warning(
-            f"no cocktails loaded from server. Request failed: {resp.content}")
-        # return imported values
-        return drink_list_import, drink_options_import
-    resp = json.loads(resp.content)
-    drink_list = []
-    drink_options = set()
-    cocktail = {}
-    for cocktailJson in resp["Data"]:
-        cocktail["name"] = cocktailJson["Name"]
-        cocktail["ingredients"] = {}
-        for ing in cocktailJson["Ingredients"]:
-            drink_options.add(ing["Name"])
-            cocktail["ingredients"][ing["Name"]] = ing["Amount"]
-        print(cocktail)
-        drink_list.append(cocktail)
-    drink_options.add("Nothing")
-    drink_options = list(drink_options)
-    return drink_list, drink_options
-
-
-    # setup logging
+# setup logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 # log to cli
@@ -79,9 +41,9 @@ p.add_argument("-s", "--server", dest="server",
                type=str, default="http://localhost:1234")
 
 args = p.parse_args()
-drink_list, drink_options = loadDrinks(
+bartender = Bartender(
     args.server, args.username, args.password)
-bartender = Bartender()
+drink_list, drink_options = bartender.loadDrinks()
 bartender.buildMenu(drink_list, drink_options)
 server = BartenderServer(
     bartender, drink_list, args.username, args.password, args.alexaUser)

@@ -1,19 +1,28 @@
+import string
 from menu import MenuItem, Menu, Back, MenuContext, MenuDelegate
 import json
 from datetime import datetime
 import threading
 import logging
 from time import sleep
+from config.drinks import drink_list as drink_list_import, drink_options as drink_options_import
+import requests
 
 
 class BartenderBase(MenuDelegate):
     stats: dict
     running: bool
     stopEvent: threading.Event
+    server: string
+    username: string
+    password: string
 
-    def __init__(self):
+    def __init__(self,server, username, password):
         self.running = False
         self.stopEvent = threading.Event()
+        self.server = server
+        self.username = username
+        self.password = password
 
         self.stats = self.loadStats()
 
@@ -77,6 +86,8 @@ class BartenderBase(MenuDelegate):
         configuration_menu.addOption(Back("Back"))
         # adds an option that cleans all pumps to the configuration menu
         configuration_menu.addOption(MenuItem('clean', 'Clean'))
+        # add reload drinks option to reload drinks from the server
+        configuration_menu.addOption(MenuItem("reload_drinks", "Reload drinks"))
         configuration_menu.setParent(m)
 
         m.addOptions(drink_opts)
@@ -136,6 +147,9 @@ class BartenderBase(MenuDelegate):
         elif(menuItem.type == "clean"):
             self.clean()
             return True
+        elif(menuItem.type == "reload_drinks"):
+            drink_list, drink_options = self.loadDrinks()
+            self.buildMenu(drink_list, drink_options)
         return False
 
     def stop(self):
@@ -163,3 +177,37 @@ class BartenderBase(MenuDelegate):
         else:
             logging.info("stop")
             self.stop()
+
+    def loadDrinks(self):
+        try:
+            resp = requests.get(f"{self.server}/v1/cocktail/fav",
+                                headers={
+                                    "Content-Type": "application/json",
+                                    "username": self.username,
+                                    "password": self.password,
+                                })
+        except Exception as err:
+            logging.warning(
+                f"no cocktails loaded from server. Error during request: {err}")
+            # return imported values
+            return drink_list_import, drink_options_import
+        if resp.status_code != 200:
+            logging.warning(
+                f"no cocktails loaded from server. Request failed: {resp.content}")
+            # return imported values
+            return drink_list_import, drink_options_import
+        resp = json.loads(resp.content)
+        drink_list = []
+        drink_options = set()
+        cocktail = {}
+        for cocktailJson in resp["Data"]:
+            cocktail["name"] = cocktailJson["Name"]
+            cocktail["ingredients"] = {}
+            for ing in cocktailJson["Ingredients"]:
+                drink_options.add(ing["Name"])
+                cocktail["ingredients"][ing["Name"]] = ing["Amount"]
+            print(cocktail)
+            drink_list.append(cocktail)
+        drink_options.add("Nothing")
+        drink_options = list(drink_options)
+        return drink_list, drink_options

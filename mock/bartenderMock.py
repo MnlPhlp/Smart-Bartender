@@ -6,8 +6,8 @@ from bartender.bartenderBase import BartenderBase
 
 
 class Bartender(BartenderBase):
-    def __init__(self):
-        super(Bartender, self).__init__()
+    def __init__(self,server, username, password):
+        super(Bartender, self).__init__(server,username,password)
         # load the pump configuration from file
         self.pump_configuration = json.load(open('config/pump_config.json'))
 
