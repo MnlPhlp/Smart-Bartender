@@ -29,12 +29,12 @@ def loadDrinks(server, username, password):
                                 "password": password,
                             })
     except Exception as err:
-        logging.warn(
+        logging.warning(
             f"no cocktails loaded from server. Error during request: {err}")
         # return imported values
         return drink_list_import, drink_options_import
     if resp.status_code != 200:
-        logging.warn(
+        logging.warning(
             f"no cocktails loaded from server. Request failed: {resp.content}")
         # return imported values
         return drink_list_import, drink_options_import
