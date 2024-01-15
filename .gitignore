@@ -8,3 +8,5 @@ start.sh
 tunnel
 .tunnel
 venv
+production
+smart_bartender_pcb-backups
